@@ -1,3 +1,5 @@
+from tokenize import String
+from xmlrpc.client import Boolean
 from flask import Flask
 import string
 import random
@@ -8,6 +10,29 @@ application = Flask(__name__)
 # Data
 #################################
 rooms = {} # Key: Roomcode, Value: All Data
+
+'''
+
+{
+    grocery: {
+        1: {
+            name: String
+            completed: Boolean
+        }
+    },
+
+    chores: {
+        1: {
+            name: String
+            completed: Boolean
+            assignee: String
+            dates: String[] of Weekdays
+        }
+    },
+
+    roommates: String[]
+}
+'''
 
 #################################
 # Private Functions
@@ -34,7 +59,7 @@ def generate_roomcode():
 def save():
     return rooms
 
-@application.route('room', methods=["GET"])
+@application.route('/room', methods=["GET"])
 def room():
     data = Flask.request.data
     if "roomcode" in data:
@@ -45,7 +70,7 @@ def room():
     
     return "err", 400
 
-@application.route('grocery', methods=["GET", "POST"])
+@application.route('/grocery', methods=["GET", "POST"])
 def grocery():
     pass
 
