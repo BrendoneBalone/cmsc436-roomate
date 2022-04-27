@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1875" />
         <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/activity_login.xml" value="0.25" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/login_activity.xml" value="0.25" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/main_activity.xml" value="0.16" />
       </map>
     </option>
   </component>
