@@ -70,11 +70,31 @@ class LoginActivity: Activity() {
     }
 
     private fun requestRoom(roomString: String, username: String) {
-
+        //TODO: Figure out how to request room
     }
 
     private fun onCreateRoomButtonClick() {
+        var alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        var newRoomId: Int
 
+        alertBuilder.setTitle("Are you sure you want to create a new household?")
+        alertBuilder.setMessage(
+            "This will create a new household, with a new set of roommates.\n" +
+            "Are you sure you want to proceed?")
+        alertBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener {
+            dialog, id -> dialog.cancel()
+        })
+        alertBuilder.setPositiveButton("Proceed", DialogInterface.OnClickListener {
+            dialog, id -> newRoomId = getNewRoom()
+            finish()
+        })
+
+        var alert = alertBuilder.create()
+        alert.show()
+    }
+
+    private fun getNewRoom(): Int {
+        //TODO: Implement New Room Activity
     }
 
     companion object {
