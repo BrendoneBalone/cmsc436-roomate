@@ -21,7 +21,7 @@ class Weekdays:
     SUNDAY = "sunday"
 
     @classmethod
-    def is_weekday(weekday):
+    def is_weekday(self, weekday):
         x = [Weekdays.MONDAY, Weekdays.TUESDAY, Weekdays.WEDNESDAY, Weekdays.THURSDAY,
         Weekdays.FRIDAY, Weekdays.SATURDAY, Weekdays.SUNDAY]
 
@@ -66,13 +66,16 @@ def generate_roomcode():
     while roomcode in rooms.keys():
         roomcode = generate_random_string()
 
-    rooms[roomcode] = {"grocery": {}, "chores": {}}
+    rooms[roomcode] = {"grocery": {}, "chores": {}, "roommates": []}
 
     return roomcode
 
 #################################
 # "Private" Routes
 #################################
+@application.route('/')
+def main():
+    return rooms
 
 @application.route('/save', methods=["GET"])
 def save():
@@ -81,7 +84,8 @@ def save():
 @application.route('/load', methods=["POST"])
 def load():
     newData = request.json
-    rooms = newData
+    for room in newData:
+        rooms[room] = newData[room]
     return "ok", 200
 
 
@@ -92,6 +96,9 @@ def load():
 @application.route('/login', methods=["POST"])
 def login():
     data = request.json
+    if data is None:
+        return "err", 400
+
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -115,6 +122,9 @@ def new_room_code():
 @application.route('/grocery', methods=["GET"])
 def grocery():
     data = request.json
+    if data is None:
+        return "err", 400
+
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -125,6 +135,9 @@ def grocery():
 @application.route('/grocery/add', methods=["POST"])
 def grocery_add():
     data = request.json
+    if data is None:
+        return "err", 400
+
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -132,6 +145,7 @@ def grocery_add():
                 groceryName = data["groceryName"]
 
                 if groceryName not in rooms[roomcode]["grocery"]:
+                    rooms[roomcode]["grocery"][groceryName] = {}
                     rooms[roomcode]["grocery"][groceryName]["completed"] = False
                 
                 return rooms[roomcode]["grocery"], 200
@@ -141,6 +155,9 @@ def grocery_add():
 @application.route('/grocery/remove', methods=["POST"])
 def grocery_remove():
     data = request.json
+    if data is None:
+        return "err", 400
+
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -158,12 +175,14 @@ def grocery_remove():
 @application.route('/grocery/complete', methods=["POST"])
 def grocery_complete():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
             if "groceryName" in data:
                 groceryName = data["groceryName"]
-
                 if groceryName in rooms[roomcode]["grocery"]:
                     rooms[roomcode]["grocery"][groceryName]["completed"] = True
                     return rooms[roomcode]["grocery"], 200
@@ -173,6 +192,9 @@ def grocery_complete():
 @application.route('/grocery/uncomplete', methods=["POST"])
 def grocery_uncomplete():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -188,6 +210,9 @@ def grocery_uncomplete():
 @application.route('/roommates', methods=["GET"])
 def roommates():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -198,6 +223,9 @@ def roommates():
 @application.route('/chores', methods=["GET"])
 def chores():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -208,6 +236,9 @@ def chores():
 @application.route('/chores/add', methods=["POST"])
 def chores_add():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -215,6 +246,7 @@ def chores_add():
                 choreName = data["choreName"]
 
                 if choreName not in rooms[roomcode]["chores"]:
+                    rooms[roomcode]["chores"][choreName] = {}
                     rooms[roomcode]["chores"][choreName]["completed"] = False
                     rooms[roomcode]["chores"][choreName]["username"] = ""
                     rooms[roomcode]["chores"][choreName]["weekday"] = ""
@@ -224,8 +256,11 @@ def chores_add():
     return "err", 400
 
 @application.route('/chores/remove', methods=["POST"])
-def chores_add():
+def chores_remove():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -243,6 +278,9 @@ def chores_add():
 @application.route('/chores/complete', methods=["POST"])
 def chores_complete():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -259,6 +297,9 @@ def chores_complete():
 @application.route('/chores/uncomplete', methods=["POST"])
 def chores_uncomplete():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -275,6 +316,9 @@ def chores_uncomplete():
 @application.route('/chores/username/add', methods=["POST"])
 def chores_username_add():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -296,6 +340,9 @@ def chores_username_add():
 @application.route('/chores/username/remove', methods=["POST"])
 def chores_username_remove():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -312,6 +359,9 @@ def chores_username_remove():
 @application.route('/chores/weekday/add', methods=["POST"])
 def chores_weekday_add():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:
@@ -332,6 +382,9 @@ def chores_weekday_add():
 @application.route('/chores/weekday/remove', methods=["POST"])
 def chores_weekday_remove():
     data = request.json
+    if data is None:
+        return "err", 400
+        
     if "roomcode" in data:
         roomcode = data["roomcode"]
         if roomcode in rooms:

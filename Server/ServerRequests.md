@@ -1,5 +1,15 @@
 # Server Request Syntax
 
+## Running the server locally (just for testing)
+I'm running python 3.8 with Flask 1.1.2. If you're running into issues try check your version of python and flask.
+
+Steps to test using local server:
+1. run application.py
+2. run loadData.py (optional if you want to load some test data)
+3. Set the 'link' in Kotlin to http://localhost:5000 (This is the default port)
+4. Use GET/POST requests at routes of the link (ex. localhost:5000/login)
+5. Save data by running saveData.py (again optional)
+
 ## Link
 The link/url will be created later. All requests should be sent to URL+some route.
 Ex. `someurl.com/room'
