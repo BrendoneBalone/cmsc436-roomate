@@ -1,11 +1,11 @@
 import requests
 import json
 
-URL = ''
+URL = 'http://localhost:5000'
 
 data = requests.get(URL+'/save')
 
-jsonData = json.dumps(data)
+jsonData = json.dumps(data.json())
 
 f = open("data.json", "w")
 f.write(jsonData)
