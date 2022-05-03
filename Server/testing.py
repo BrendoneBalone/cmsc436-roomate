@@ -4,7 +4,7 @@ import json
 URL = 'http://localhost:5000'
 
 # Load prev data
-f = open("data.json")
+f = open("data2.json")
 jsonData = json.load(f)
 f.close()
 
@@ -15,107 +15,112 @@ data = requests.post(URL+'/load', json=jsonData)
 # roomcode = r.json()["roomcode"]
 
 
-roomcode = "U7HDV4"
+roomcode = "0PDZGV"
 
 # # Test login
-inputData = {"roomcode": roomcode, "username": "Daniel"}
-r = requests.post(URL+"/login", json=inputData)
+username = "Daniel"
+r = requests.post(URL+"/login/roomcode/"+roomcode+"/username/"+username)
 
-inputData = {"roomcode": roomcode, "username": "Logan"}
-r = requests.post(URL+"/login", json=inputData)
+username = "Logan"
+r = requests.post(URL+"/login/roomcode/"+roomcode+"/username/"+username)
 
-inputData = {"roomcode": roomcode, "username": "Brendan"}
-r = requests.post(URL+"/login", json=inputData)
+username = "Brendan"
+r = requests.post(URL+"/login/roomcode/"+roomcode+"/username/"+username)
 
-# Add grocery
-inputData = {"roomcode": roomcode, "groceryName": "eggs"}
-r = requests.post(URL+"/grocery/add", json=inputData)
+# # Add grocery
+groceryName = "eggs"
+r = requests.post(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName)
 
-inputData = {"roomcode": roomcode, "groceryName": "milk"}
-r = requests.post(URL+"/grocery/add", json=inputData)
+groceryName = "milk"
+r = requests.post(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName)
 
-inputData = {"roomcode": roomcode, "groceryName": "cereal"}
-r = requests.post(URL+"/grocery/add", json=inputData)
+groceryName = "cereal"
+r = requests.post(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName)
 
 # Remove grocery
-inputData = {"roomcode": roomcode, "groceryName": "cereal"}
-r = requests.post(URL+"/grocery/remove", json=inputData)
+groceryName = "cereal"
+r = requests.delete(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName)
+
+# get grocery
+groceryName = "eggs"
+r = requests.get(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName)
+# print(r.json())
 
 # Grocery
-inputData = {"roomcode": roomcode}
-r = requests.get(URL+"/grocery", json=inputData)
+r = requests.get(URL+"/grocery/roomcode/"+ roomcode)
+# print(r.json())
 
 # Grocery complete
-inputData = {"roomcode": roomcode, "groceryName": "eggs"}
-r = requests.post(URL+"/grocery/complete", json=inputData)
+groceryName = "eggs"
+r = requests.post(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName+"/complete")
 
-inputData = {"roomcode": roomcode, "groceryName": "milk"}
-r = requests.post(URL+"/grocery/complete", json=inputData)
+groceryName = "milk"
+r = requests.post(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName+"/complete")
 
 # Grocery uncomplete
-inputData = {"roomcode": roomcode, "groceryName": "eggs"}
-r = requests.post(URL+"/grocery/uncomplete", json=inputData)
+groceryName = "eggs"
+r = requests.delete(URL+"/grocery/roomcode/"+roomcode+"/name/"+groceryName+"/complete")
 
-# roommates
-Data = {"roomcode": roomcode}
-r = requests.get(URL+"/roommates", json=inputData)
+# # roommates
+r = requests.get(URL+"/roommates/roomcode/"+roomcode)
 # print(r.json())
 
 # chores
-Data = {"roomcode": roomcode}
-r = requests.get(URL+"/chores", json=inputData)
+r = requests.get(URL+"/chores/roomcode/"+roomcode)
 # print(r.json())
 
 # add chores
-inputData = {"roomcode": roomcode, "choreName": "Wash dishes"}
-r = requests.post(URL+"/chores/add", json=inputData)
+choreName = "clean the dishes"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName)
 
-inputData = {"roomcode": roomcode, "choreName": "Vaccum"}
-r = requests.post(URL+"/chores/add", json=inputData)
+choreName = "vaccum"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName)
 
-inputData = {"roomcode": roomcode, "choreName": "Take out trash"}
-r = requests.post(URL+"/chores/add", json=inputData)
+choreName = "take out trash"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName)
 
 # remove chores
-inputData = {"roomcode": roomcode, "choreName": "Take out trash"}
-r = requests.post(URL+"/chores/remove", json=inputData)
+choreName = "take out trash"
+r = requests.delete(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName)
 
 # complete chores
-inputData = {"roomcode": roomcode, "choreName": "Wash dishes"}
-r = requests.post(URL+"/chores/complete", json=inputData)
+choreName = "clean the dishes"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/complete")
 
-inputData = {"roomcode": roomcode, "choreName": "Vaccum"}
-r = requests.post(URL+"/chores/complete", json=inputData)
+choreName = "vaccum"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/complete")
 
 # uncomplete chores
-inputData = {"roomcode": roomcode, "choreName": "Wash dishes"}
-r = requests.post(URL+"/chores/uncomplete", json=inputData)
+choreName = "vaccum"
+r = requests.delete(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/complete")
 
 # add username chores
-inputData = {"roomcode": roomcode, "choreName": "Wash dishes", "username": "Logan"}
-r = requests.post(URL+"/chores/username/add", json=inputData)
+choreName = "vaccum"
+username = "Daniel"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/username/"+username)
 
-inputData = {"roomcode": roomcode, "choreName": "Vaccum", "username": "Daniel"}
-r = requests.post(URL+"/chores/username/add", json=inputData)
+choreName = "clean the dishes"
+username = "Logan"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/username/"+username)
 
 # # remove username chores
-# inputData = {"roomcode": roomcode, "choreName": "Vaccum", "username": "Logan"}
-# r = requests.post(URL+"/chores/username/remove", json=inputData)
+choreName = "clean the dishes"
+username = "Daniel"
+r = requests.delete(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/username/"+username)
 
-# add weekday
-inputData = {"roomcode": roomcode, "choreName": "Wash dishes", "weekday": "monday"}
-r = requests.post(URL+"/chores/weekday/add", json=inputData)
+# # add weekday
+choreName = "vaccum"
+weekday = "sunday"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/weekday/"+weekday)
 
-inputData = {"roomcode": roomcode, "choreName": "Vaccum", "weekday": "sunday"}
-r = requests.post(URL+"/chores/weekday/add", json=inputData)
+choreName = "clean the dishes"
+weekday = "monday"
+r = requests.post(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/weekday/"+weekday)
 
-# # remove weekday
-# inputData = {"roomcode": roomcode, "choreName": "Vaccum"}
-# r = requests.post(URL+"/chores/weekday/remove", json=inputData)
-
-
-
-
+# # # remove weekday
+choreName = "clean the dishes"
+weekday = "monday"
+r = requests.delete(URL+"/chores/roomcode/"+roomcode+"/name/"+choreName+"/weekday/"+weekday)
 
 
 # Save Data
