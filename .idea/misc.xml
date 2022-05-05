@@ -3,7 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1875" />
         <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/activity_login.xml" value="0.25" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/add_item.xml" value="0.16799999999999998" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/grocery_header_view.xml" value="0.13854166666666667" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/grocery_item.xml" value="0.264" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/grocery_recycle_view.xml" value="0.12132725430597771" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/login_activity.xml" value="0.25" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/login_loading.xml" value="0.25" />
+        <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/main_activity.xml" value="0.2" />
       </map>
     </option>
   </component>

@@ -9,4 +9,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <string name="preference_key">"RoommateAppLoginPreferences"</string>
+    <string name="missing_login_field">"One of your inputs is empty, please fill in all fields before attempting to login."</string>
 </resources>
