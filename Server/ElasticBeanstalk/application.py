@@ -93,25 +93,15 @@ def load():
 # Routes
 #################################
 
-@application.route('/login', methods=["POST"])
-def login():
-    data = request.json
-    if data is None:
-        return "err", 400
+@application.route('/login/roomcode/<roomcode>/username/<username>', methods=["POST"])
+def login(roomcode='', username=''):
 
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "username" in data:
-                username = data["username"]
+    if roomcode in rooms:
+            
+        if username not in rooms[roomcode]["roommates"]:
+            rooms[roomcode]["roommates"].append(username)
 
-                if username == "":
-                    return "err", 400
-                
-                if username not in rooms[roomcode]["roommates"]:
-                    rooms[roomcode]["roommates"].append(username)
-
-                return {"roomcode": roomcode}, 200
+        return {"roomcode": roomcode}, 200
 
     return "err", 400
 
@@ -119,277 +109,159 @@ def login():
 def new_room_code():
     return {"roomcode": generate_roomcode()}, 200
 
-@application.route('/grocery', methods=["GET"])
-def grocery():
-    data = request.json
-    if data is None:
-        return "err", 400
+@application.route('/grocery/roomcode/<roomcode>', methods=["GET"])
+def grocery(roomcode=''):
 
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            return rooms[roomcode]["grocery"], 200
+    if roomcode in rooms:
+        return rooms[roomcode]["grocery"], 200
     
     return "err", 400
 
-@application.route('/grocery/add', methods=["POST"])
-def grocery_add():
-    data = request.json
-    if data is None:
-        return "err", 400
-
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
+@application.route('/grocery/roomcode/<roomcode>/name/<groceryName>', methods=["GET", "POST", "DELETE"])
+def grocery_add(roomcode='', groceryName=''):
+    if request.method == "GET":
         if roomcode in rooms:
-            if "groceryName" in data:
-                groceryName = data["groceryName"]
 
-                if groceryName not in rooms[roomcode]["grocery"]:
-                    rooms[roomcode]["grocery"][groceryName] = {}
-                    rooms[roomcode]["grocery"][groceryName]["completed"] = False
-                
+            if groceryName in rooms[roomcode]["grocery"]:
+                return {groceryName: rooms[roomcode]["grocery"][groceryName]}, 200
+
+    elif request.method == "POST":
+        if roomcode in rooms:
+
+            if groceryName not in rooms[roomcode]["grocery"]:
+                rooms[roomcode]["grocery"][groceryName] = {}
+                rooms[roomcode]["grocery"][groceryName]["completed"] = False
+            
+            return rooms[roomcode]["grocery"], 200
+    elif request.method == "DELETE":
+        if roomcode in rooms:
+
+            if groceryName in rooms[roomcode]["grocery"]:
+                removed = rooms[roomcode]["grocery"].pop(groceryName)
+
+                if removed != None:
+                    return rooms[roomcode]["grocery"], 200
+
+    return "err", 400
+
+@application.route('/grocery/roomcode/<roomcode>/name/<groceryName>/complete', methods=["POST", "DELETE"])
+def grocery_complete(roomcode='', groceryName=''):
+
+    if request.method == "POST":
+        if roomcode in rooms:
+
+            if groceryName in rooms[roomcode]["grocery"]:
+                rooms[roomcode]["grocery"][groceryName]["completed"] = True
+                return rooms[roomcode]["grocery"], 200
+
+    elif request.method == "DELETE":
+        if roomcode in rooms:
+
+            if groceryName in rooms[roomcode]["grocery"]:
+                rooms[roomcode]["grocery"][groceryName]["completed"] = False
                 return rooms[roomcode]["grocery"], 200
 
     return "err", 400
-
-@application.route('/grocery/remove', methods=["POST"])
-def grocery_remove():
-    data = request.json
-    if data is None:
-        return "err", 400
-
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "groceryName" in data:
-                groceryName = data["groceryName"]
-
-                if groceryName in rooms[roomcode]["grocery"]:
-                    removed = rooms[roomcode]["grocery"].pop(groceryName)
-
-                    if removed != None:
-                        return rooms[roomcode]["grocery"], 200
-
-    return "err", 400
-
-@application.route('/grocery/complete', methods=["POST"])
-def grocery_complete():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "groceryName" in data:
-                groceryName = data["groceryName"]
-                if groceryName in rooms[roomcode]["grocery"]:
-                    rooms[roomcode]["grocery"][groceryName]["completed"] = True
-                    return rooms[roomcode]["grocery"], 200
-
-    return "err", 400
-
-@application.route('/grocery/uncomplete', methods=["POST"])
-def grocery_uncomplete():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "groceryName" in data:
-                groceryName = data["groceryName"]
-
-                if groceryName in rooms[roomcode]["grocery"]:
-                    rooms[roomcode]["grocery"][groceryName]["completed"] = False
-                    return rooms[roomcode]["grocery"], 200
-
-    return "err", 400
     
-@application.route('/roommates', methods=["GET"])
-def roommates():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            return {"roommates": rooms[roomcode]["roommates"]}, 200
+@application.route('/roommates/roomcode/<roomcode>', methods=["GET"])
+def roommates(roomcode=''):
+    if roomcode in rooms:
+        return {"roommates": rooms[roomcode]["roommates"]}, 200
     
     return "err", 400
 
-@application.route('/chores', methods=["GET"])
-def chores():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            return rooms[roomcode]["chores"], 200
+@application.route('/chores/roomcode/<roomcode>', methods=["GET"])
+def chores(roomcode=''):
+    if roomcode in rooms:
+        return rooms[roomcode]["chores"], 200
     
     return "err", 400
 
-@application.route('/chores/add', methods=["POST"])
-def chores_add():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
+@application.route('/chores/roomcode/<roomcode>/name/<choreName>', methods=["GET", "POST", "DELETE"])
+def chores_add(roomcode='', choreName=''):
+    if request.method == "GET":
         if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
 
-                if choreName not in rooms[roomcode]["chores"]:
-                    rooms[roomcode]["chores"][choreName] = {}
-                    rooms[roomcode]["chores"][choreName]["completed"] = False
-                    rooms[roomcode]["chores"][choreName]["username"] = ""
-                    rooms[roomcode]["chores"][choreName]["weekday"] = ""
+            if choreName in rooms[roomcode]["chores"]:
+                return rooms[roomcode]["chores"][choreName], 200
+    elif request.method == "POST":
+        if roomcode in rooms:
+
+            if choreName not in rooms[roomcode]["chores"]:
+                rooms[roomcode]["chores"][choreName] = {}
+                rooms[roomcode]["chores"][choreName]["completed"] = False
+                rooms[roomcode]["chores"][choreName]["username"] = ""
+                rooms[roomcode]["chores"][choreName]["weekday"] = ""
                 
+                return rooms[roomcode]["chores"], 200
+    elif request.method == "DELETE":
+        if roomcode in rooms:
+
+            if choreName in rooms[roomcode]["chores"]:
+                removed = rooms[roomcode]["chores"].pop(choreName)
+
+                if removed != None:
+                    return rooms[roomcode]["chores"], 200
+
+    return "err", 400
+
+@application.route('/chores/roomcode/<roomcode>/name/<choreName>/complete', methods=["POST", "DELETE"])
+def chores_complete(roomcode='', choreName=''):
+    if request.method == "POST":
+
+        if roomcode in rooms:
+
+            if choreName in rooms[roomcode]["chores"]:
+                rooms[roomcode]["chores"][choreName]["completed"] = True
+            
+                return rooms[roomcode]["chores"], 200
+    elif request.method == "DELETE":
+        if roomcode in rooms:
+
+            if choreName in rooms[roomcode]["chores"]:
+                rooms[roomcode]["chores"][choreName]["completed"] = False
+            
                 return rooms[roomcode]["chores"], 200
 
     return "err", 400
 
-@application.route('/chores/remove', methods=["POST"])
-def chores_remove():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
+@application.route('/chores/roomcode/<roomcode>/name/<choreName>/username/<username>', methods=["POST", "DELETE"])
+def chores_username_add(roomcode='', choreName='', username=''):
+
+    if request.method == "POST":
         if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
 
-                if choreName in rooms[roomcode]["chores"]:
-                    removed = rooms[roomcode]["chores"].pop(choreName)
+            if choreName in rooms[roomcode]["chores"]:
 
-                    if removed != None:
+                    if username in rooms[roomcode]["roommates"]:
+
+                        rooms[roomcode]["chores"][choreName]["username"] = username
+                    
                         return rooms[roomcode]["chores"], 200
+    
+    elif request.method == "DELETE":
+        if roomcode in rooms:
+
+            if choreName in rooms[roomcode]["chores"]:
+                rooms[roomcode]["chores"][choreName]["username"] = ""
+            
+                return rooms[roomcode]["chores"], 200
 
     return "err", 400
 
-@application.route('/chores/complete', methods=["POST"])
-def chores_complete():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
+@application.route('/chores/roomcode/<roomcode>/name/<choreName>/weekday/<weekday>', methods=["POST", "DELETE"])
+def chores_weekday_add(roomcode='', choreName='', weekday=''):
+    if request.method == "POST":
         if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
 
-                if choreName in rooms[roomcode]["chores"]:
-                    rooms[roomcode]["chores"][choreName]["completed"] = True
-                
-                    return rooms[roomcode]["chores"], 200
+            if choreName in rooms[roomcode]["chores"]:
 
-    return "err", 400
-
-@application.route('/chores/uncomplete', methods=["POST"])
-def chores_uncomplete():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
+                    if Weekdays.is_weekday(weekday) is not None:
+                        rooms[roomcode]["chores"][choreName]["weekday"] = weekday
+            
+                        return rooms[roomcode]["chores"], 200
+    elif request.method == "DELETE":
         if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
-
-                if choreName in rooms[roomcode]["chores"]:
-                    rooms[roomcode]["chores"][choreName]["completed"] = False
-                
-                    return rooms[roomcode]["chores"], 200
-
-    return "err", 400
-
-@application.route('/chores/username/add', methods=["POST"])
-def chores_username_add():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
-
-                if choreName in rooms[roomcode]["chores"]:
-                    if "username" in data:
-                        username = data["username"]
-
-                        if username in rooms[roomcode]["roommates"]:
-
-                            rooms[roomcode]["chores"][choreName]["username"] = username
-                        
-                            return rooms[roomcode]["chores"], 200
-
-    return "err", 400
-
-@application.route('/chores/username/remove', methods=["POST"])
-def chores_username_remove():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
-
-                if choreName in rooms[roomcode]["chores"]:
-                    rooms[roomcode]["chores"][choreName]["username"] = ""
-                
-                    return rooms[roomcode]["chores"], 200
-
-    return "err", 400
-
-@application.route('/chores/weekday/add', methods=["POST"])
-def chores_weekday_add():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
-
-                if choreName in rooms[roomcode]["chores"]:
-                    if "weekday" in data:
-                        weekday = data["weekday"]
-
-                        if Weekdays.is_weekday(weekday) is not None:
-                            rooms[roomcode]["chores"][choreName]["weekday"] = weekday
-                
-                            return rooms[roomcode]["chores"], 200
-
-    return "err", 400
-
-@application.route('/chores/weekday/remove', methods=["POST"])
-def chores_weekday_remove():
-    data = request.json
-    if data is None:
-        return "err", 400
-        
-    if "roomcode" in data:
-        roomcode = data["roomcode"]
-        if roomcode in rooms:
-            if "choreName" in data:
-                choreName = data["choreName"]
 
                 if choreName in rooms[roomcode]["chores"]:
                     rooms[roomcode]["chores"][choreName]["weekday"] = ""
