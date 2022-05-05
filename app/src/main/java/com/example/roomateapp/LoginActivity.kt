@@ -13,6 +13,9 @@ import android.widget.Toast
 
 class LoginActivity: Activity() {
 
+    //TODO: Add a bit of text specifying username preferences, or adding some more input testing when logging in
+    //TODO: Figure out how we're storing the roomcode and user and passing it around as needed. This is urgent and needs to be fixed.
+
     private lateinit var roomText: EditText
     private lateinit var nameText: EditText
     private lateinit var loginButton: Button
@@ -24,10 +27,12 @@ class LoginActivity: Activity() {
         super.onCreate(savedInstanceState)
 
         sharedPreferences = getSharedPreferences(preferenceKey, Context.MODE_PRIVATE)
+        var roomcode: String? = sharedPreferences.getString(ROOM_PREF_KEY, "")
+        var username: String? = sharedPreferences.getString(USER_PREF_KEY, "")
 
-        if(/* There is a shared preference */) {
-            setContentView(/* Login Loading Layout */)
-            //TODO: Implement pulling roomcode and user from SharedPreference
+        if(roomcode!!.isEmpty()) {
+            setContentView(R.layout.login_loading)
+            requestRoom(roomcode, username!!)
         } else {
             setContentView(R.layout.login_activity)
 
@@ -42,40 +47,26 @@ class LoginActivity: Activity() {
     }
 
     private fun onLoginClick() {
-        var roomcode: String = roomText.text.toString().trim()
-        var name: String = nameText.text.toString().trim()
+        var roomcode = roomText.text.toString().trim().uppercase()
+        var username: String = nameText.text.toString().trim().lowercase()
 
-        if(roomcode.isEmpty() || name.isEmpty()) {
+        if(roomcode.isEmpty() || username.isEmpty()) {
             Toast.makeText(this@LoginActivity, R.string.missing_login_field, Toast.LENGTH_SHORT)
             return
         }
 
-        var alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        alertBuilder.setTitle("Are you sure you want to login with this information?")
-        alertBuilder.setMessage(
-            "Your roomcode is set as $roomcode.\n" +
-            "Your username is set as $name.\n" +
-            "This will permantly assign you this room and username. You cannot change these parameters." +
-            "Are you sure you want to proceed?")
-        alertBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener {
-          dialog, id -> dialog.cancel()
-        })
-        alertBuilder.setPositiveButton("Login", DialogInterface.OnClickListener {
-            dialog, id -> requestRoom(roomcode, name)
-        })
-
-        val alert = alertBuilder.create()
-        alert.show()
-
+        requestRoom(roomcode, username)
     }
 
-    private fun requestRoom(roomString: String, username: String) {
-        //TODO: Figure out how to request room
+    private fun requestRoom(roomcode: String, username: String) {
+        // TODO: Figure out how to request room
+        // Also, make sure to save the roomcode and username to the sharedpreferences after a successful request
+        // Use the keys seen in the onCreate and in the companion object below
     }
 
     private fun onCreateRoomButtonClick() {
         var alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        var newRoomId: Int
+        var newRoomId: String
 
         alertBuilder.setTitle("Are you sure you want to create a new household?")
         alertBuilder.setMessage(
@@ -91,14 +82,26 @@ class LoginActivity: Activity() {
 
         var alert = alertBuilder.create()
         alert.show()
+
+        /* The plan here is to request a new room, then fill out the roomcode EditText box
+        * with the new roomcode. This will allow the login process to work the same as it
+        * normally would for any other user. We can add a button to maybe copy the roomcode
+        * or something of the like on the main page for sharing? Either way I think that will work.
+        * Either way, the getNewRoom() call on the AlertDialog positive (line 78) will get the code
+        * then down here we will set the EditText to that code, maybe pop a toast message
+        * saying that the room was created. Let me know if you have any questions or what you think */
     }
 
-    private fun getNewRoom(): Int {
+    // This will return the String of the new roomcode
+    private fun getNewRoom(): String {
         //TODO: Implement New Room Activity
+        return ""
     }
 
     companion object {
         private const val preferenceKey = "RoommateAppLoginDetails"
         private const val TAG = "RoommateApp"
+        const val ROOM_PREF_KEY = "roomcode"
+        const val USER_PREF_KEY = "username"
     }
 }

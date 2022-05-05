@@ -4,7 +4,8 @@ import android.content.Intent
 
 class GroceryItem {
 
-    // TODO: Create variables for each property of GroceryItem
+    var name: String? = String()
+    var status = Status.NOTDONE
 
     enum class Status {
         NOTDONE, DONE
@@ -12,28 +13,24 @@ class GroceryItem {
 
 
     // Creates GroceryItem from list of properties
-    internal constructor(/* Add variables here */) {
-        //TODO: Fill once item layout is created
+    internal constructor(name: String) {
+        this.name = name
+        this.status = Status.NOTDONE
     }
 
 
     // Creates GroceryItems from packaged intent
     internal constructor(intent: Intent) {
-       //TODO: Fill once item layout is created
-    }
-
-
-    // Package list of variables into an intent
-    fun packageIntent(/* Add variables here */) {
-        //TODO: Implement based on properties after layout created
+        name = intent.getStringExtra("name")
+        status = Status.NOTDONE
     }
 
     override fun toString(): String {
-        //TODO: Implement based on properties after layout created
+        return ("$name, $status")
     }
 
     fun toLog(): String {
-        //TODO: Implement based on properties after layout created
+        return ("$name, $status")
     }
 
     companion object {

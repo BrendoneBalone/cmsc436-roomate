@@ -49,6 +49,7 @@ class GroceryManagerActivity : Activity() {
 
     companion object {
         private const val TAG = "RoommateApp"
+        const val ADD_GROCERY_ITEM_REQUEST = 0
         private const val MENU_ALL = Menu.FIRST
     }
 }
