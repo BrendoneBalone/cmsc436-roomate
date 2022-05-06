@@ -6,23 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/logout_button"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="25dp"
-        android:text="Logout"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="100dp"
         android:text="Select a task!"
         android:textAlignment="center"
         android:textSize="45sp"
@@ -35,7 +23,7 @@
         android:id="@+id/grocery_button"
         android:layout_width="285dp"
         android:layout_height="130dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="75dp"
         android:text="Grocery List"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -54,5 +42,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/grocery_button" />
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="40dp"
+        android:text="Logout"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/copy_button"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="40dp"
+        android:text="Copy Room Code"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

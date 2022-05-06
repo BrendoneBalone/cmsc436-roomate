@@ -1,9 +1,14 @@
 package com.example.roomateapp.grocery
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.roomateapp.R
 
 class GroceryManagerActivity : Activity() {
 
@@ -11,6 +16,24 @@ class GroceryManagerActivity : Activity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.grocery_recycle_view)
+
+        val mRecyclerView = findViewById<RecyclerView>(R.id.list)
+        mRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        mAdapter = GroceryListAdapter(this)
+
+        loadItemsFromDatabase()
+
+        mRecyclerView.adapter = mAdapter
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.i(TAG, "Entered onActivityResult() in GroceryManagerAdapter")
+
+        if(requestCode == ADD_GROCERY_ITEM_REQUEST && resultCode == RESULT_OK) {
+            mAdapter.add(GroceryItem(data!!))
+        }
     }
 
     public override fun onResume() {
@@ -32,7 +55,7 @@ class GroceryManagerActivity : Activity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             MENU_ALL -> {
-                //TODO: Implement check all
+                mAdapter.clear()
                 true
             }
             else -> super.onOptionsItemSelected(item)
