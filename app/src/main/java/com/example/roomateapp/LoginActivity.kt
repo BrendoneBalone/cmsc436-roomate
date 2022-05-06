@@ -3,10 +3,9 @@ package com.example.roomateapp
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -26,9 +25,9 @@ class LoginActivity: Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedPreferences = getSharedPreferences(preferenceKey, Context.MODE_PRIVATE)
-        var roomcode: String? = sharedPreferences.getString(ROOM_PREF_KEY, "")
-        var username: String? = sharedPreferences.getString(USER_PREF_KEY, "")
+        sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
+        var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
+        var username: String? = sharedPreferences.getString(USER_KEY, "")
 
         if(roomcode!!.isEmpty()) {
             setContentView(R.layout.login_loading)
@@ -47,11 +46,13 @@ class LoginActivity: Activity() {
     }
 
     private fun onLoginClick() {
+        Log.i(TAG, "Login button clicked in LoginActivity")
+
         var roomcode = roomText.text.toString().trim().uppercase()
         var username: String = nameText.text.toString().trim().lowercase()
 
         if(roomcode.isEmpty() || username.isEmpty()) {
-            Toast.makeText(this@LoginActivity, R.string.missing_login_field, Toast.LENGTH_SHORT)
+            Toast.makeText(this@LoginActivity, R.string.missing_login_field, Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -62,9 +63,17 @@ class LoginActivity: Activity() {
         // TODO: Figure out how to request room
         // Also, make sure to save the roomcode and username to the sharedpreferences after a successful request
         // Use the keys seen in the onCreate and in the companion object below
+
+
+        var transaction: SharedPreferences.Editor = sharedPreferences.edit()
+        transaction.putString(ROOM_KEY, roomcode)
+        transaction.putString(USER_KEY, username)
+        transaction.apply()
     }
 
     private fun onCreateRoomButtonClick() {
+        Log.i(TAG, "Create Room button clicked in LoginActivity")
+
         var alertBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         var newRoomId: String
 
@@ -72,13 +81,13 @@ class LoginActivity: Activity() {
         alertBuilder.setMessage(
             "This will create a new household, with a new set of roommates.\n" +
             "Are you sure you want to proceed?")
-        alertBuilder.setNegativeButton("Cancel", DialogInterface.OnClickListener {
-            dialog, id -> dialog.cancel()
-        })
-        alertBuilder.setPositiveButton("Proceed", DialogInterface.OnClickListener {
-            dialog, id -> newRoomId = getNewRoom()
+        alertBuilder.setNegativeButton("Cancel") { dialog, id ->
+            dialog.cancel()
+        }
+        alertBuilder.setPositiveButton("Proceed") { dialog, id ->
+            newRoomId = getNewRoom()
             finish()
-        })
+        }
 
         var alert = alertBuilder.create()
         alert.show()
@@ -99,9 +108,9 @@ class LoginActivity: Activity() {
     }
 
     companion object {
-        private const val preferenceKey = "RoommateAppLoginDetails"
         private const val TAG = "RoommateApp"
-        const val ROOM_PREF_KEY = "roomcode"
-        const val USER_PREF_KEY = "username"
+        const val ROOM_KEY = "roomcode"
+        const val USER_KEY = "username"
+        const val PREF_KEY = "RoommateAppLoginDetails"
     }
 }
