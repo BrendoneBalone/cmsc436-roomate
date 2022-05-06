@@ -6,13 +6,29 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import io.ktor.client.*
+import io.ktor.client.request.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.roomateapp.MainActivity
 import com.example.roomateapp.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 
 class GroceryManagerActivity : Activity() {
 
     private lateinit var mAdapter: GroceryListAdapter
+
+    private val _liveData = MutableLiveData<String>()
+    val liveData: LiveData<String>
+        get() = _liveData
+
+    val gson = GsonBuilder().setPrettyPrinting().create()
+
+    var job: Job? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +39,8 @@ class GroceryManagerActivity : Activity() {
 
         mAdapter = GroceryListAdapter(this)
 
-        loadItemsFromDatabase()
+        var rawJSON: String = getItemsFromDatabase()
+        rawJSON = rawJSON.prettyPrint()
 
         mRecyclerView.adapter = mAdapter
     }
@@ -34,6 +51,8 @@ class GroceryManagerActivity : Activity() {
         if(requestCode == ADD_GROCERY_ITEM_REQUEST && resultCode == RESULT_OK) {
             mAdapter.add(GroceryItem(data!!))
         }
+
+        //TODO: Add new item to the database
     }
 
     public override fun onResume() {
@@ -62,8 +81,12 @@ class GroceryManagerActivity : Activity() {
         }
     }
 
-    private fun loadItemsFromDatabase() {
-        //TODO: Implement pulling and creating objects from the database
+    private suspend fun getItemsFromDatabase(): String {
+        val requestURL: String = "$host/grocery/roomcode/${MainActivity.roomcode}"
+
+        withContext(Dispatchers.IO) {
+            return HttpClient().get(requestURL)
+        }
     }
 
     private fun saveGroceryList() {
@@ -74,5 +97,7 @@ class GroceryManagerActivity : Activity() {
         private const val TAG = "RoommateApp"
         const val ADD_GROCERY_ITEM_REQUEST = 0
         private const val MENU_ALL = Menu.FIRST
+
+        const val host: String = "http://localhost:5000"
     }
 }
