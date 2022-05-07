@@ -21,9 +21,10 @@ import org.json.JSONTokener
 
 class GroceryViewModel: ViewModel() {
 
-    private val _liveData = MutableLiveData<Map<String, *>>()
-    val liveData: LiveData<Map<String, *>>
-        get() = _liveData
+    private val _groceries = MutableLiveData<Map<String, *>>()
+    val groceries: LiveData<Map<String, *>>
+        get() = _groceries
+
 
     var job: Job? = null
 
@@ -44,7 +45,7 @@ class GroceryViewModel: ViewModel() {
     }
 
     // Returns Map version of grocery list
-    fun getGroceryList(roomcode: String): Map<String, *>? {
+    fun getGroceryList(roomcode: String) {
 
         Log.i(TAG, "Making getGroceryList request with roomcode $roomcode")
 
@@ -55,22 +56,22 @@ class GroceryViewModel: ViewModel() {
             try {
                 val response = getRequest("grocery/roomcode/$roomcode")
 
-                Log.i(TAG, "Recieved a response from our getGroceryList request with a body of: \n" +
-                        "${response}")
+                Log.i(TAG, "Recieved a response from our getGroceryList request with a body of:\n" +
+                        "$response")
 
-//                if(response.status.value in 200..209) {
-//                    val rawJSON: String = response.content.toString()
-//                    obj = JSONObject(rawJSON).toMap()
-//                }
+                obj = JSONObject(response).toMap()
 
-                _liveData.postValue(obj!!)
+                if(obj!!["status"] in 200..209) {
+                    throw Exception("Received response with code ${obj!!["status"]}")
+                }
+
+                _groceries.postValue(obj!!)
 
             } catch (e: Exception) {
                 Log.i(TAG, "Error in getGroceryList in GroceryViewModel: ${e.message}")
             }
         }
 
-        return obj
     }
 
     // Adds given grocery item to database
@@ -116,7 +117,7 @@ class GroceryViewModel: ViewModel() {
     }
 
     // Creates generic getRequest
-    private suspend fun getRequest(url: String): HttpResponse =
+    private suspend fun getRequest(url: String): String =
         withContext(Dispatchers.IO) {
             HttpClient().get("$SERVER/$url")
         }
