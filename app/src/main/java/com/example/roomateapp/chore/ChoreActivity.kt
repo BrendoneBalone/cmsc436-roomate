@@ -32,6 +32,8 @@ class ChoreActivity : FragmentActivity() {
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
 
+    private var roomcode: String? = null
+    private var username: String? = null
 
     private val status: Status
         get() {
@@ -49,6 +51,9 @@ class ChoreActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_chore)
+
+        roomcode = intent.getStringExtra("roomcode")
+        username = intent.getStringExtra("username")
 
         mTitleText = findViewById<View>(R.id.chore_title) as EditText
         mDefaultStatusButton = findViewById<View>(R.id.statusNotDone) as RadioButton
@@ -119,6 +124,8 @@ class ChoreActivity : FragmentActivity() {
                 putExtra("status",statusData)
                 putExtra("date",dateData)
                 putExtra("time",timeData)
+                putExtra("roomcode", roomcode)
+                putExtra("username", username)
             }
 
             // TODO - return data Intent and finish
