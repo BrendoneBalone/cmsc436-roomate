@@ -41,7 +41,23 @@ class GroceryManagerActivity : AppCompatActivity() {
 
         mRecyclerView.adapter = mAdapter
 
-        importGroceryList()
+        mGroceryViewModel.getGroceryList(roomcode!!)
+
+        mGroceryViewModel.groceries.observe(this) { result ->
+            Log.i(TAG, "GroceryManagerActivity has registered a database pull of:\n" +
+                    "$result")
+
+            if(result.containsKey("status")) {
+                throw Error("Unable to request Groceries from database. Check logs.")
+            }
+
+            for(key in result.keys) {
+                Log.i(TAG, "Adding $key to the list")
+                mAdapter.add(GroceryItem(key))
+            }
+
+            Log.i(TAG, "Groceries should be added.")
+        }
     }
 
 
@@ -65,19 +81,6 @@ class GroceryManagerActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         updateDatabase()
-    }
-
-    /**
-     * Imports all groceries from the given database
-     */
-    private fun importGroceryList() {
-        var groceries: Map<String, *>? = mGroceryViewModel.getGroceryList(roomcode!!)
-
-        if(!groceries.isNullOrEmpty()) {
-            for (key in groceries.keys) {
-                mAdapter.add(GroceryItem(key))
-            }
-        }
     }
 
     /**

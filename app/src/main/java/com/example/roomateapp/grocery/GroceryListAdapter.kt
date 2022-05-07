@@ -26,30 +26,12 @@ class GroceryListAdapter(private val mContext: Context) :
     // Adds a GroceryItem to the adapter, and notify observers of dataset change
     fun add(item: GroceryItem) {
         mItems.add(item)
-        notifyItemChanged(mItems.size)
+        notifyItemInserted(mItems.size)
     }
 
     // Deletes GroceryItem if the name matches something in the list
     fun delete(name: String) {
         mItems.removeIf { item: GroceryItem -> item.name.equals(name) }
-    }
-
-    // Returns list of items to delete from the database on activity deletion
-    fun getItemsToDelete(): ArrayList<String> {
-        return toDelete
-    }
-
-    // Sets all items on list to specified check status
-    fun checkAll(checkStatus: Boolean) {
-        if (checkStatus) {
-            for (item in mItems) {
-                if(!toDelete.contains(item.name)) toDelete.add(item.name!!)
-            }
-        } else {
-            for (item in mItems) {
-                toDelete.remove(item.name)
-            }
-        }
     }
 
 
@@ -69,10 +51,15 @@ class GroceryListAdapter(private val mContext: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
+        Log.i(TAG, "Entered onCreateViewholder")
+
         if (viewType == HEADER_VIEW_TYPE) {
+            Log.i(TAG, "Creating header")
             val v = LayoutInflater.from(parent.context).inflate(R.layout.grocery_header_view, parent, false)
             return ViewHolder(v)
         } else {
+            Log.i(TAG, "Creating grocery item")
             val v = LayoutInflater.from(parent.context).inflate(R.layout.grocery_item, parent, false)
             val viewHolder = ViewHolder(v)
 
@@ -84,6 +71,8 @@ class GroceryListAdapter(private val mContext: Context) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+
+        Log.i(TAG, "Entered onBindViewHolder, for $viewHolder at position $position")
 
         if (position == 0) {
             viewHolder.itemView.setOnClickListener {
