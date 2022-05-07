@@ -35,7 +35,11 @@ class LoginActivity: AppCompatActivity() {
         var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
         var username: String? = sharedPreferences.getString(USER_KEY, "")
 
-        if(roomcode!! != "") {
+        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+
+        Log.i(TAG, "Pulled sharedPreferences, Roomcode of \"$roomcode\", and username of \"$username\"")
+
+        if(roomcode!! != "" && username!! != "") {
             setContentView(R.layout.login_loading)
             requestRoom(roomcode, username!!)
         } else {
@@ -50,7 +54,7 @@ class LoginActivity: AppCompatActivity() {
             createRoomButton.setOnClickListener{onCreateRoomButtonClick()}
         }
 
-        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+
 
         loginViewModel.roomcode.observe(this) { result ->
             // Update the text view to display the JSON result.
@@ -59,6 +63,10 @@ class LoginActivity: AppCompatActivity() {
         loginViewModel.loginSuccess.observe(this) { result ->
             // Update the text view to display the JSON result.
             Log.i(TAG, "Request room success")
+
+            if(roomcode == "") roomcode = roomText.text.toString()
+            if(username == "") username = nameText.text.toString()
+
             var transaction: SharedPreferences.Editor = sharedPreferences.edit()
             transaction.putString(ROOM_KEY, roomcode)
             transaction.putString(USER_KEY, username)
@@ -67,6 +75,7 @@ class LoginActivity: AppCompatActivity() {
             var intent = Intent(this, MainActivity::class.java)
             intent.putExtra(ROOM_KEY, roomcode)
             intent.putExtra(USER_KEY, username)
+
             startActivity(intent)
             finish()
         }
@@ -87,23 +96,7 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun requestRoom(roomcode: String, username: String) {
-        // TODO: Figure out how to request room
-        // Also, make sure to save the roomcode and username to the sharedpreferences after a successful request
-        // Use the keys seen in the onCreate and in the companion object below
         loginViewModel.onRequestRoomCalled(roomcode, username)
-//        if (loginViewModel.onRequestRoomCalled(roomcode, username)) {
-//            Log.i(TAG, "Request room success")
-//            var transaction: SharedPreferences.Editor = sharedPreferences.edit()
-//            transaction.putString(ROOM_KEY, roomcode)
-//            transaction.putString(USER_KEY, username)
-//            transaction.apply()
-//
-//            var intent = Intent(this, MainActivity::class.java)
-//            intent.putExtra(ROOM_KEY, roomcode)
-//            intent.putExtra(USER_KEY, username)
-//            startActivity(intent)
-//            finish()
-//        }
     }
 
     private fun onCreateRoomButtonClick() {

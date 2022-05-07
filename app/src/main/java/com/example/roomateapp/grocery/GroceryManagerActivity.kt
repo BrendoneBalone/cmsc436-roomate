@@ -6,73 +6,99 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.roomateapp.MainActivity
 import com.example.roomateapp.R
 
-class GroceryManagerActivity : Activity() {
+class GroceryManagerActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: GroceryListAdapter
+    private lateinit var mGroceryViewModel: GroceryViewModel
+
+    private var roomcode: String? = null
+    private var username: String? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.grocery_recycle_view)
 
+        roomcode = intent.getStringExtra("roomcode")
+        username = intent.getStringExtra("username")
+
+        Log.i(TAG, "Registered roomcode of $roomcode and username of $username in MainActivity")
+        Log.i(TAG, "Intent looks as follows: ${intent.extras.toString()}")
+
         val mRecyclerView = findViewById<RecyclerView>(R.id.list)
         mRecyclerView.layoutManager = LinearLayoutManager(this)
 
         mAdapter = GroceryListAdapter(this)
-
-        loadItemsFromDatabase()
+        mGroceryViewModel = ViewModelProvider(this)[GroceryViewModel::class.java]
 
         mRecyclerView.adapter = mAdapter
+
+        mGroceryViewModel.getGroceryList(roomcode!!)
+
+        mGroceryViewModel.groceries.observe(this) { result ->
+            Log.i(TAG, "GroceryManagerActivity has registered a database pull of:\n" +
+                    "$result")
+
+            if(result.containsKey("status")) {
+                throw Error("Unable to request Groceries from database. Check logs.")
+            }
+
+            for(key in result.keys) {
+                Log.i(TAG, "Adding $key to the list")
+                mAdapter.add(GroceryItem(key))
+            }
+
+            Log.i(TAG, "Groceries should be added.")
+        }
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
         Log.i(TAG, "Entered onActivityResult() in GroceryManagerAdapter")
 
         if(requestCode == ADD_GROCERY_ITEM_REQUEST && resultCode == RESULT_OK) {
             mAdapter.add(GroceryItem(data!!))
         }
+
+        var itemName: String? = data!!.getStringExtra("name")
+        mGroceryViewModel.addGroceryItem(roomcode!!, itemName!!)
     }
 
     public override fun onResume() {
         super.onResume()
     }
 
-    override fun onPause() {
-        super.onPause()
-        saveGroceryList()
+    override fun onStop() {
+        super.onStop()
+        updateDatabase()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        super.onCreateOptionsMenu(menu)
+    /**
+     * Deletes items that need to be removed from the database
+     */
+    private fun updateDatabase() {
+        var items: ArrayList<String> = mAdapter.toDelete
 
-        menu.add(Menu.NONE, MENU_ALL, Menu.NONE, "Check all")
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            MENU_ALL -> {
-                mAdapter.clear()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+        for(itemName: String in items) {
+            mGroceryViewModel.deleteGroceryItem(roomcode!!, itemName)
+            mAdapter.delete(itemName)
         }
-    }
 
-    private fun loadItemsFromDatabase() {
-        //TODO: Implement pulling and creating objects from the database
-    }
-
-    private fun saveGroceryList() {
-        //TODO: Implement saving items to database
+        mAdapter.toDelete.clear()
     }
 
     companion object {
         private const val TAG = "RoommateApp"
         const val ADD_GROCERY_ITEM_REQUEST = 0
-        private const val MENU_ALL = Menu.FIRST
     }
 }

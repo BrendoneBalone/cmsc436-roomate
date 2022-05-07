@@ -3,6 +3,7 @@ package com.example.roomateapp.grocery
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,19 +20,18 @@ class GroceryListAdapter(private val mContext: Context) :
     RecyclerView.Adapter<GroceryListAdapter.ViewHolder>() {
 
     private val mItems = ArrayList<GroceryItem>()
+    val toDelete = ArrayList<String>()
 
 
     // Adds a GroceryItem to the adapter, and notify observers of dataset change
     fun add(item: GroceryItem) {
         mItems.add(item)
-        notifyItemChanged(mItems.size)
+        notifyItemInserted(mItems.size)
     }
 
-
-    // Clears the GroceryList adapter of all items
-    fun clear() {
-        mItems.clear()
-        notifyDataSetChanged()
+    // Deletes GroceryItem if the name matches something in the list
+    fun delete(name: String) {
+        mItems.removeIf { item: GroceryItem -> item.name.equals(name) }
     }
 
 
@@ -51,10 +51,15 @@ class GroceryListAdapter(private val mContext: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
+        Log.i(TAG, "Entered onCreateViewholder")
+
         if (viewType == HEADER_VIEW_TYPE) {
+            Log.i(TAG, "Creating header")
             val v = LayoutInflater.from(parent.context).inflate(R.layout.grocery_header_view, parent, false)
             return ViewHolder(v)
         } else {
+            Log.i(TAG, "Creating grocery item")
             val v = LayoutInflater.from(parent.context).inflate(R.layout.grocery_item, parent, false)
             val viewHolder = ViewHolder(v)
 
@@ -66,6 +71,8 @@ class GroceryListAdapter(private val mContext: Context) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+
+        Log.i(TAG, "Entered onBindViewHolder, for $viewHolder at position $position")
 
         if (position == 0) {
             viewHolder.itemView.setOnClickListener {
@@ -89,8 +96,15 @@ class GroceryListAdapter(private val mContext: Context) :
             viewHolder.name!!.text = groceryItem.name
             viewHolder.checkbox!!.isChecked = false
 
-            //TODO: Implement onCheckedListener to delete the item from the grocery list
-            viewHolder.checkbox!!.setOnCheckedChangeListener { compoundButton, b ->  }
+            //Strikes through item if checked, and sets to be removed
+            viewHolder.checkbox!!.setOnCheckedChangeListener { _ , isChecked ->
+                var nameView = viewHolder.name!!
+                if (isChecked) {
+                    toDelete.add(nameView.text.toString())
+                } else {
+                    toDelete.remove(nameView.text.toString())
+                }
+            }
         }
     }
 

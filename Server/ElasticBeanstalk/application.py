@@ -103,7 +103,7 @@ def login(roomcode='', username=''):
 
         return {"roomcode": roomcode}, 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/new_room_code', methods=["GET"])
 def new_room_code():
@@ -115,7 +115,7 @@ def grocery(roomcode=''):
     if roomcode in rooms:
         return rooms[roomcode]["grocery"], 200
     
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/grocery/roomcode/<roomcode>/name/<groceryName>', methods=["GET", "POST", "DELETE"])
 def grocery_add(roomcode='', groceryName=''):
@@ -142,7 +142,7 @@ def grocery_add(roomcode='', groceryName=''):
                 if removed != None:
                     return rooms[roomcode]["grocery"], 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/grocery/roomcode/<roomcode>/name/<groceryName>/complete', methods=["POST", "DELETE"])
 def grocery_complete(roomcode='', groceryName=''):
@@ -161,21 +161,21 @@ def grocery_complete(roomcode='', groceryName=''):
                 rooms[roomcode]["grocery"][groceryName]["completed"] = False
                 return rooms[roomcode]["grocery"], 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
     
 @application.route('/roommates/roomcode/<roomcode>', methods=["GET"])
 def roommates(roomcode=''):
     if roomcode in rooms:
         return {"roommates": rooms[roomcode]["roommates"]}, 200
     
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/chores/roomcode/<roomcode>', methods=["GET"])
 def chores(roomcode=''):
     if roomcode in rooms:
         return rooms[roomcode]["chores"], 200
     
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/chores/roomcode/<roomcode>/name/<choreName>', methods=["GET", "POST", "DELETE"])
 def chores_add(roomcode='', choreName=''):
@@ -203,7 +203,7 @@ def chores_add(roomcode='', choreName=''):
                 if removed != None:
                     return rooms[roomcode]["chores"], 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/chores/roomcode/<roomcode>/name/<choreName>/complete', methods=["POST", "DELETE"])
 def chores_complete(roomcode='', choreName=''):
@@ -223,7 +223,7 @@ def chores_complete(roomcode='', choreName=''):
             
                 return rooms[roomcode]["chores"], 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/chores/roomcode/<roomcode>/name/<choreName>/username/<username>', methods=["POST", "DELETE"])
 def chores_username_add(roomcode='', choreName='', username=''):
@@ -247,7 +247,7 @@ def chores_username_add(roomcode='', choreName='', username=''):
             
                 return rooms[roomcode]["chores"], 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
 
 @application.route('/chores/roomcode/<roomcode>/name/<choreName>/weekday/<weekday>', methods=["POST", "DELETE"])
 def chores_weekday_add(roomcode='', choreName='', weekday=''):
@@ -268,7 +268,7 @@ def chores_weekday_add(roomcode='', choreName='', weekday=''):
         
                     return rooms[roomcode]["chores"], 200
 
-    return "err", 400
+    return {"status": "fail"}, 400
 
 if __name__ == "__main__":
     application.debug = True
