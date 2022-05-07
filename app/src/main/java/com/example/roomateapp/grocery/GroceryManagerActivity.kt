@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.roomateapp.MainActivity
 import com.example.roomateapp.R
 
-class GroceryManagerActivity : Activity() {
+class GroceryManagerActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: GroceryListAdapter
     private lateinit var mGroceryViewModel: GroceryViewModel
@@ -28,12 +29,15 @@ class GroceryManagerActivity : Activity() {
         mRecyclerView.layoutManager = LinearLayoutManager(this)
 
         mAdapter = GroceryListAdapter(this)
-        mGroceryViewModel = ViewModelProvider(this).get(GroceryViewModel::class.java)
+        mGroceryViewModel = ViewModelProvider(this)[GroceryViewModel::class.java]
 
         mRecyclerView.adapter = mAdapter
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
         Log.i(TAG, "Entered onActivityResult() in GroceryManagerAdapter")
 
         if(requestCode == ADD_GROCERY_ITEM_REQUEST && resultCode == RESULT_OK) {
@@ -45,11 +49,6 @@ class GroceryManagerActivity : Activity() {
 
     public override fun onResume() {
         super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        saveGroceryList()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

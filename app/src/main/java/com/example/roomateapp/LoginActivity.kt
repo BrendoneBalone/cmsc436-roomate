@@ -36,6 +36,8 @@ class LoginActivity: AppCompatActivity() {
         var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
         var username: String? = sharedPreferences.getString(USER_KEY, "")
 
+        Log.i(TAG, "Pulled sharedPreferences, Roomcode of \"$roomcode\", and username of \"$username\"")
+
         if(roomcode!! != "") {
             setContentView(R.layout.login_loading)
             requestRoom(roomcode, username!!)
