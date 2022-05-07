@@ -3,6 +3,7 @@ package com.example.roomateapp.grocery
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ class GroceryListAdapter(private val mContext: Context) :
     RecyclerView.Adapter<GroceryListAdapter.ViewHolder>() {
 
     private val mItems = ArrayList<GroceryItem>()
+    val toDelete = ArrayList<String>()
 
 
     // Adds a GroceryItem to the adapter, and notify observers of dataset change
@@ -27,11 +29,27 @@ class GroceryListAdapter(private val mContext: Context) :
         notifyItemChanged(mItems.size)
     }
 
+    // Deletes GroceryItem if the name matches something in the list
+    fun delete(name: String) {
+        mItems.removeIf { item: GroceryItem -> item.name.equals(name) }
+    }
 
-    // Clears the GroceryList adapter of all items
-    fun clear() {
-        mItems.clear()
-        notifyDataSetChanged()
+    // Returns list of items to delete from the database on activity deletion
+    fun getItemsToDelete(): ArrayList<String> {
+        return toDelete
+    }
+
+    // Sets all items on list to specified check status
+    fun checkAll(checkStatus: Boolean) {
+        if (checkStatus) {
+            for (item in mItems) {
+                if(!toDelete.contains(item.name)) toDelete.add(item.name!!)
+            }
+        } else {
+            for (item in mItems) {
+                toDelete.remove(item.name)
+            }
+        }
     }
 
 
@@ -89,8 +107,15 @@ class GroceryListAdapter(private val mContext: Context) :
             viewHolder.name!!.text = groceryItem.name
             viewHolder.checkbox!!.isChecked = false
 
-            //TODO: Implement onCheckedListener to delete the item from the grocery list
-            viewHolder.checkbox!!.setOnCheckedChangeListener { compoundButton, b ->  }
+            //Strikes through item if checked, and sets to be removed
+            viewHolder.checkbox!!.setOnCheckedChangeListener { _ , isChecked ->
+                var nameView = viewHolder.name!!
+                if (isChecked) {
+                    toDelete.add(nameView.text.toString())
+                } else {
+                    toDelete.remove(nameView.text.toString())
+                }
+            }
         }
     }
 
