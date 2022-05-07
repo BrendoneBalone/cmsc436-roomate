@@ -30,7 +30,6 @@ class LoginActivity: AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
         var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
         var username: String? = sharedPreferences.getString(USER_KEY, "")
@@ -118,6 +117,11 @@ class LoginActivity: AppCompatActivity() {
         //TODO: Implement New Room Activity
         loginViewModel.onGetNewRoomCalled()
         return ""
+    }
+    //This is only for development
+    private fun clearSharedPrefs() {
+        var sharedPreferences = getSharedPreferences(LoginActivity.PREF_KEY, Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove(LoginActivity.USER_KEY).remove(LoginActivity.ROOM_KEY).apply()
     }
 
     companion object {
