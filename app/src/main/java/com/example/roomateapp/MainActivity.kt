@@ -18,14 +18,19 @@ class MainActivity: Activity() {
     private lateinit var logoutButton: Button
     private lateinit var copyButton: Button
 
+    private var roomcode: String? = null
+    private var username: String? = null
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
         Log.i(TAG, "Entered Main Activity.")
 
-        roomcode = intent.getStringExtra(LoginActivity.ROOM_KEY)
-        username = intent.getStringExtra(LoginActivity.USER_KEY)
+        roomcode = intent.getStringExtra("roomcode")
+        username = intent.getStringExtra("username")
+
+        Log.i(TAG, "Registered roomcode of $roomcode and username of $username in MainActivity")
 
         groceryButton = findViewById<Button>(R.id.grocery_button)
         choresButton = findViewById<Button>(R.id.chores_button)
@@ -36,6 +41,8 @@ class MainActivity: Activity() {
             Log.i(TAG, "Selected Grocery List from Main Activity.")
 
             var intent: Intent = Intent(this, GroceryManagerActivity::class.java)
+            intent.putExtra("roomcode", roomcode)
+            intent.putExtra("username", username)
             startActivity(intent)
         }
 
@@ -52,8 +59,8 @@ class MainActivity: Activity() {
             roomcode = null
             username = null
 
-            var sharedPreferences = getSharedPreferences(LoginActivity.PREF_KEY, Context.MODE_PRIVATE)
-            sharedPreferences.edit().remove(LoginActivity.USER_KEY).apply()
+            var sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
+            sharedPreferences.edit().remove("username").remove("roomcode").apply()
 
             var intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -75,7 +82,6 @@ class MainActivity: Activity() {
 
     companion object {
         private const val TAG = "RoommateApp"
-        var roomcode: String? = null
-        var username: String? = null
+        const val PREF_KEY = "RoommateAppLoginDetails"
     }
 }

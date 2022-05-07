@@ -10,10 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.roomateapp.LoginActivity
 import com.example.roomateapp.MainActivity
 import com.example.roomateapp.R
 
@@ -22,9 +20,18 @@ class GroceryManagerActivity : AppCompatActivity() {
     private lateinit var mAdapter: GroceryListAdapter
     private lateinit var mGroceryViewModel: GroceryViewModel
 
+    private var roomcode: String? = null
+    private var username: String? = null
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.grocery_recycle_view)
+
+        roomcode = intent.getStringExtra("roomcode")
+        username = intent.getStringExtra("username")
+
+        Log.i(TAG, "Registered roomcode of $roomcode and username of $username in MainActivity")
+        Log.i(TAG, "Intent looks as follows: ${intent.extras.toString()}")
 
         val mRecyclerView = findViewById<RecyclerView>(R.id.list)
         mRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -48,7 +55,7 @@ class GroceryManagerActivity : AppCompatActivity() {
         }
 
         var itemName: String? = data!!.getStringExtra("name")
-        mGroceryViewModel.addGroceryItem(MainActivity.roomcode!!, itemName!!)
+        mGroceryViewModel.addGroceryItem(roomcode!!, itemName!!)
     }
 
     public override fun onResume() {
@@ -64,10 +71,10 @@ class GroceryManagerActivity : AppCompatActivity() {
      * Imports all groceries from the given database
      */
     private fun importGroceryList() {
-        var groceries: Map<String, *>? = mGroceryViewModel.getGroceryList(MainActivity.roomcode!!)
+        var groceries: Map<String, *>? = mGroceryViewModel.getGroceryList(roomcode!!)
 
         if(!groceries.isNullOrEmpty()) {
-            for (key in groceries!!.keys) {
+            for (key in groceries.keys) {
                 mAdapter.add(GroceryItem(key))
             }
         }
@@ -80,7 +87,7 @@ class GroceryManagerActivity : AppCompatActivity() {
         var items: ArrayList<String> = mAdapter.toDelete
 
         for(itemName: String in items) {
-            mGroceryViewModel.deleteGroceryItem(MainActivity.roomcode!!, itemName)
+            mGroceryViewModel.deleteGroceryItem(roomcode!!, itemName)
             mAdapter.delete(itemName)
         }
 
@@ -90,8 +97,5 @@ class GroceryManagerActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "RoommateApp"
         const val ADD_GROCERY_ITEM_REQUEST = 0
-        private const val MENU_ALL = Menu.FIRST
-
-        const val host: String = "http://localhost:5000"
     }
 }

@@ -46,6 +46,8 @@ class GroceryViewModel: ViewModel() {
     // Returns Map version of grocery list
     fun getGroceryList(roomcode: String): Map<String, *>? {
 
+        Log.i(TAG, "Making getGroceryList request with roomcode $roomcode")
+
         var obj: Map<String, *>? = null
 
         // Launch the request in the background
@@ -53,10 +55,13 @@ class GroceryViewModel: ViewModel() {
             try {
                 val response = getRequest("grocery/roomcode/$roomcode")
 
-                if(response.status.value in 200..209) {
-                    val rawJSON: String = response.content.toString()
-                    obj = JSONObject(rawJSON).toMap()
-                }
+                Log.i(TAG, "Recieved a response from our getGroceryList request with a body of: \n" +
+                        "${response}")
+
+//                if(response.status.value in 200..209) {
+//                    val rawJSON: String = response.content.toString()
+//                    obj = JSONObject(rawJSON).toMap()
+//                }
 
                 _liveData.postValue(obj!!)
 
@@ -72,9 +77,14 @@ class GroceryViewModel: ViewModel() {
     fun addGroceryItem(roomcode: String, item: String): Boolean {
         var success: Boolean = false
 
+        Log.i(TAG, "Starting an addGroceryItem request with roomcode $roomcode and item $item")
+
         job = viewModelScope.launch {
             try {
                 val response = postRequest("grocery/roomcode/$roomcode/name/$item")
+
+                Log.i(TAG, "Received a response from addGroceryRequest for $item with code ${response.status.value}")
+
                 if (response.status.value in 200..209) success = true
             } catch (e: Exception) {
                 Log.i(TAG, "Error in addGroceryItem in GroceryViewModel: ${e.message}")
@@ -88,9 +98,14 @@ class GroceryViewModel: ViewModel() {
     fun deleteGroceryItem(roomcode: String, item: String): Boolean {
         var success: Boolean = false
 
+        Log.i(TAG, "Starting a deleteGroceryItem request with roomcode $roomcode and item $item")
+
         job = viewModelScope.launch {
             try {
                 val response = deleteRequest("grocery/roomcode/$roomcode/name/$item")
+
+                Log.i(TAG, "Received a response from deleteGroceryItem for $item with code ${response.status.value}")
+
                 if(response.status.value in 200..209) success = true
             } catch (e: Exception) {
                 Log.i(TAG, "Error in deleteGroceryItem in GroceryViewModel: ${e.message}")
