@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.roomateapp.LoginActivity
 import com.example.roomateapp.MainActivity
 import com.example.roomateapp.R
 
@@ -32,6 +33,8 @@ class GroceryManagerActivity : AppCompatActivity() {
         mGroceryViewModel = ViewModelProvider(this)[GroceryViewModel::class.java]
 
         mRecyclerView.adapter = mAdapter
+
+        importGroceryList()
     }
 
 
@@ -44,32 +47,44 @@ class GroceryManagerActivity : AppCompatActivity() {
             mAdapter.add(GroceryItem(data!!))
         }
 
-        //TODO: Add new item to the database
+        var itemName: String? = data!!.getStringExtra("name")
+        mGroceryViewModel.addGroceryItem(MainActivity.roomcode!!, itemName!!)
     }
 
     public override fun onResume() {
         super.onResume()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        super.onCreateOptionsMenu(menu)
-
-        menu.add(Menu.NONE, MENU_ALL, Menu.NONE, "Check all")
-        return true
+    override fun onStop() {
+        super.onStop()
+        updateDatabase()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            MENU_ALL -> {
-                mAdapter.clear()
-                true
+    /**
+     * Imports all groceries from the given database
+     */
+    private fun importGroceryList() {
+        var groceries: Map<String, *>? = mGroceryViewModel.getGroceryList(MainActivity.roomcode!!)
+
+        if(!groceries.isNullOrEmpty()) {
+            for (key in groceries!!.keys) {
+                mAdapter.add(GroceryItem(key))
             }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun saveGroceryList() {
-        //TODO: Implement saving items to database
+    /**
+     * Deletes items that need to be removed from the database
+     */
+    private fun updateDatabase() {
+        var items: ArrayList<String> = mAdapter.toDelete
+
+        for(itemName: String in items) {
+            mGroceryViewModel.deleteGroceryItem(MainActivity.roomcode!!, itemName)
+            mAdapter.delete(itemName)
+        }
+
+        mAdapter.toDelete.clear()
     }
 
     companion object {
