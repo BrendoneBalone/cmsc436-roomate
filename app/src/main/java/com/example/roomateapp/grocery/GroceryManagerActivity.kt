@@ -8,27 +8,17 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.ktor.client.*
-import io.ktor.client.request.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.roomateapp.MainActivity
 import com.example.roomateapp.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 
 class GroceryManagerActivity : Activity() {
 
     private lateinit var mAdapter: GroceryListAdapter
-
-    private val _liveData = MutableLiveData<String>()
-    val liveData: LiveData<String>
-        get() = _liveData
-
-    val gson = GsonBuilder().setPrettyPrinting().create()
-
-    var job: Job? = null
+    private lateinit var mGroceryViewModel: GroceryViewModel
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +28,7 @@ class GroceryManagerActivity : Activity() {
         mRecyclerView.layoutManager = LinearLayoutManager(this)
 
         mAdapter = GroceryListAdapter(this)
-
-        var rawJSON: String = getItemsFromDatabase()
-        rawJSON = rawJSON.prettyPrint()
+        mGroceryViewModel = ViewModelProvider(this).get(GroceryViewModel::class.java)
 
         mRecyclerView.adapter = mAdapter
     }
@@ -78,14 +66,6 @@ class GroceryManagerActivity : Activity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private suspend fun getItemsFromDatabase(): String {
-        val requestURL: String = "$host/grocery/roomcode/${MainActivity.roomcode}"
-
-        withContext(Dispatchers.IO) {
-            return HttpClient().get(requestURL)
         }
     }
 
