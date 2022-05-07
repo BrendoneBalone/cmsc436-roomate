@@ -1,4 +1,4 @@
-package com.example.roomateapp
+package com.example.roomateapp.chore
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -21,58 +21,31 @@ import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
-class LoginViewModel : ViewModel(){
+class ChoreViewModel : ViewModel(){
 
     private val _roomcode = MutableLiveData<String>()
 
-    private val _loginSuccess = MutableLiveData<Boolean>()
+    private val _choreSuccess = MutableLiveData<Boolean>()
 
     /** Immutable LiveData for external publishing/observing. */
     val roomcode: LiveData<String>
         get() = _roomcode
-    val loginSuccess: LiveData<Boolean>
-        get() = _loginSuccess
+    val choreSuccess: LiveData<Boolean>
+        get() = _choreSuccess
     val gson = GsonBuilder().setPrettyPrinting().create()
     var job: Job? = null
 
-    fun onGetNewRoomCalled() {
-        // Ignore button click if a request is still active.
-        if (job?.isActive == true) {
-            return
-        }
-
-        // Immediately post a busy string to the LiveData feed.
-        _roomcode.postValue("...")
-
-        // Launch a new coroutine to run network request in the background.
-        job = viewModelScope.launch {
-            try {
-                // 1. Run the suspending network request.
-                val rawJson = makeGetRequest("$URL/new_room_code")
-
-                // 2. Post the returned JSON string to the LiveData feed.
-                Log.i(TAG, "Received $rawJson")
-                val map : Map<String, *> = JSONObject(rawJson).toMap()
-                _roomcode.postValue(map.get("roomcode").toString())
-
-            } catch (e: Exception) {
-                // Something went wrong ... post error to LiveData feed.
-//                _roomcode.postValue("Network request failed: ${e.message}")
-                onGetNewRoomCalled()
-            }
-        }
-    }
-
-    fun onRequestRoomCalled(roomcode: String, username: String) {
+    fun onChoreCreated(roomcode: String, username: String, chore: String, completed: Boolean, date: String) {
 
 
         job = viewModelScope.launch {
             try {
                 // 1. Run the suspending network request.
-                val response = makePostRequest("$URL/login/roomcode/$roomcode/username/$username")
+                    Log.i(TAG,roomcode)
+                val response = makePostRequest("$URL/chores/roomcode/$roomcode/name/$chore")
 
                 if (response.status.value == 200) {
-                    _loginSuccess.postValue(true)
+                    _choreSuccess.postValue(true)
                     Log.i(TAG, "Received 200")
                 }
 
@@ -101,7 +74,7 @@ class LoginViewModel : ViewModel(){
         }
     }
 
-    fun String.prettyPrint(): String =
+    private fun String.prettyPrint(): String =
         gson.toJson(JsonParser.parseString(this))
 
     private suspend fun makeGetRequest(url: String): String =

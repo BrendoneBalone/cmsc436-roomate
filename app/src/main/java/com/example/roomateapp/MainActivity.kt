@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import com.example.roomateapp.chore.ChoreManagerActivity
 import com.example.roomateapp.grocery.GroceryManagerActivity
 
 class MainActivity: Activity() {
@@ -26,7 +28,6 @@ class MainActivity: Activity() {
 
         roomcode = intent.getStringExtra(LoginActivity.ROOM_KEY)
         username = intent.getStringExtra(LoginActivity.USER_KEY)
-
         groceryButton = findViewById<Button>(R.id.grocery_button)
         choresButton = findViewById<Button>(R.id.chores_button)
         logoutButton = findViewById<Button>(R.id.logout_button)
@@ -40,9 +41,11 @@ class MainActivity: Activity() {
         }
 
         choresButton.setOnClickListener {
-            Log.i(TAG, "Selected Grocery List from Main Activity.")
+            Log.i(TAG, "Selected chore from Main Activity.")
+            val intent = Intent(this, ChoreManagerActivity::class.java)
+            intent.putExtra("roomcode",roomcode)
+            intent.putExtra("username",username)
 
-//            var intent: Intent = Intent(this, ChoresManagerActivity::class.java)
             startActivity(intent)
         }
 
