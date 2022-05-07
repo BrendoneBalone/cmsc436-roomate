@@ -3,6 +3,7 @@ package com.example.roomateapp
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -56,6 +57,20 @@ class LoginActivity: AppCompatActivity() {
             // Update the text view to display the JSON result.
             roomText.setText(result)
         }
+        loginViewModel.loginSuccess.observe(this) { result ->
+            // Update the text view to display the JSON result.
+            Log.i(TAG, "Request room success")
+            var transaction: SharedPreferences.Editor = sharedPreferences.edit()
+            transaction.putString(ROOM_KEY, roomcode)
+            transaction.putString(USER_KEY, username)
+            transaction.apply()
+
+            var intent = Intent(this, MainActivity::class.java)
+            intent.putExtra(ROOM_KEY, roomcode)
+            intent.putExtra(USER_KEY, username)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun onLoginClick() {
@@ -76,12 +91,20 @@ class LoginActivity: AppCompatActivity() {
         // TODO: Figure out how to request room
         // Also, make sure to save the roomcode and username to the sharedpreferences after a successful request
         // Use the keys seen in the onCreate and in the companion object below
-
-
-        var transaction: SharedPreferences.Editor = sharedPreferences.edit()
-        transaction.putString(ROOM_KEY, roomcode)
-        transaction.putString(USER_KEY, username)
-        transaction.apply()
+        loginViewModel.onRequestRoomCalled(roomcode, username)
+//        if (loginViewModel.onRequestRoomCalled(roomcode, username)) {
+//            Log.i(TAG, "Request room success")
+//            var transaction: SharedPreferences.Editor = sharedPreferences.edit()
+//            transaction.putString(ROOM_KEY, roomcode)
+//            transaction.putString(USER_KEY, username)
+//            transaction.apply()
+//
+//            var intent = Intent(this, MainActivity::class.java)
+//            intent.putExtra(ROOM_KEY, roomcode)
+//            intent.putExtra(USER_KEY, username)
+//            startActivity(intent)
+//            finish()
+//        }
     }
 
     private fun onCreateRoomButtonClick() {

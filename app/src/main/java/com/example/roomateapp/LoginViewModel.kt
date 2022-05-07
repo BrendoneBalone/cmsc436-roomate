@@ -11,6 +11,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.client.response.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,9 +25,13 @@ class LoginViewModel : ViewModel(){
 
     private val _roomcode = MutableLiveData<String>()
 
+    private val _loginSuccess = MutableLiveData<Boolean>()
+
     /** Immutable LiveData for external publishing/observing. */
     val roomcode: LiveData<String>
         get() = _roomcode
+    val loginSuccess: LiveData<Boolean>
+        get() = _loginSuccess
     val gson = GsonBuilder().setPrettyPrinting().create()
     var job: Job? = null
 
@@ -43,7 +48,7 @@ class LoginViewModel : ViewModel(){
         job = viewModelScope.launch {
             try {
                 // 1. Run the suspending network request.
-                val rawJson = makeNetworkCall("$URL/new_room_code")
+                val rawJson = makeGetRequest("$URL/new_room_code")
 
                 // 2. Post the returned JSON string to the LiveData feed.
                 Log.i(TAG, "Received $rawJson")
@@ -52,10 +57,34 @@ class LoginViewModel : ViewModel(){
 
             } catch (e: Exception) {
                 // Something went wrong ... post error to LiveData feed.
-                _roomcode.postValue("Network request failed: ${e.message}")
+//                _roomcode.postValue("Network request failed: ${e.message}")
+                onGetNewRoomCalled()
             }
         }
     }
+
+    fun onRequestRoomCalled(roomcode: String, username: String) {
+
+
+        job = viewModelScope.launch {
+            try {
+                // 1. Run the suspending network request.
+                val response = makePostRequest("$URL/login/roomcode/$roomcode/username/$username")
+
+                if (response.status.value == 200) {
+                    _loginSuccess.postValue(true)
+                    Log.i(TAG, "Received 200")
+                }
+
+            } catch (e: Exception) {
+                // Something went wrong ... post error to LiveData feed.
+                _roomcode.postValue("Network request failed: ${e.message}")
+            }
+        }
+
+    }
+
+
 
     // This was taken from https://stackoverflow.com/questions/44870961/how-to-map-a-json-string-to-kotlin-map
     fun JSONObject.toMap(): Map<String, *> = keys().asSequence().associateWith {
@@ -75,11 +104,18 @@ class LoginViewModel : ViewModel(){
     private fun String.prettyPrint(): String =
         gson.toJson(JsonParser.parseString(this))
 
-    private suspend fun makeNetworkCall(url: String): String =
+    private suspend fun makeGetRequest(url: String): String =
         withContext(Dispatchers.IO) {
             // Construct a new Ktor HttpClient to perform the get
             // request and then return the JSON result.
             HttpClient().get(url)
+        }
+
+    private suspend fun makePostRequest(url: String): HttpResponse =
+        withContext(Dispatchers.IO) {
+            // Construct a new Ktor HttpClient to perform the get
+            // request and then return the JSON result.
+            HttpClient().post(url)
         }
 
 
