@@ -9,8 +9,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 
-class LoginActivity: Activity() {
+
+class LoginActivity: AppCompatActivity() {
 
     //TODO: Add a bit of text specifying username preferences, or adding some more input testing when logging in
     //TODO: Figure out how we're storing the roomcode and user and passing it around as needed. This is urgent and needs to be fixed.
@@ -22,6 +26,8 @@ class LoginActivity: Activity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    private lateinit var loginViewModel: LoginViewModel
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,7 +35,7 @@ class LoginActivity: Activity() {
         var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
         var username: String? = sharedPreferences.getString(USER_KEY, "")
 
-        if(roomcode!!.isEmpty()) {
+        if(roomcode!! != "") {
             setContentView(R.layout.login_loading)
             requestRoom(roomcode, username!!)
         } else {
@@ -42,6 +48,13 @@ class LoginActivity: Activity() {
 
             loginButton.setOnClickListener{onLoginClick()}
             createRoomButton.setOnClickListener{onCreateRoomButtonClick()}
+        }
+
+        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+
+        loginViewModel.roomcode.observe(this) { result ->
+            // Update the text view to display the JSON result.
+            roomText.setText(result)
         }
     }
 
@@ -85,8 +98,7 @@ class LoginActivity: Activity() {
             dialog.cancel()
         }
         alertBuilder.setPositiveButton("Proceed") { dialog, id ->
-            newRoomId = getNewRoom()
-            finish()
+            getNewRoom()
         }
 
         var alert = alertBuilder.create()
@@ -104,6 +116,7 @@ class LoginActivity: Activity() {
     // This will return the String of the new roomcode
     private fun getNewRoom(): String {
         //TODO: Implement New Room Activity
+        loginViewModel.onGetNewRoomCalled()
         return ""
     }
 
@@ -112,5 +125,7 @@ class LoginActivity: Activity() {
         const val ROOM_KEY = "roomcode"
         const val USER_KEY = "username"
         const val PREF_KEY = "RoommateAppLoginDetails"
+
+        private const val URL = "http://10.0.2.2:5000"
     }
 }

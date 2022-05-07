@@ -42,7 +42,7 @@ class MainActivity: Activity() {
         choresButton.setOnClickListener {
             Log.i(TAG, "Selected Grocery List from Main Activity.")
 
-            var intent: Intent = Intent(this, ChoresManagerActivity::class.java)
+//            var intent: Intent = Intent(this, ChoresManagerActivity::class.java)
             startActivity(intent)
         }
 
