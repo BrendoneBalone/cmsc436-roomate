@@ -270,6 +270,41 @@ def chores_weekday_add(roomcode='', choreName='', weekday=''):
 
     return {"status": "fail"}, 400
 
+@application.route('chores/roomcode/<roomcode>/add_all/<choreName>/<complete>/<username>/<weekday>', methods=["POST"])
+def chores_add_all(roomcode='', choreName='', complete='', username='',weekday=''):
+    if roomcode in rooms:
+
+        if choreName in rooms[roomcode]["chores"]:
+            completeBool = False
+            if complete == "true":
+                complete = True
+            
+            if Weekdays.is_weekday(weekday) is not None:
+                if username in rooms[roomcode]["roommates"]:
+
+                    rooms[roomcode]["chores"][choreName]["weekday"] = weekday
+                    rooms[roomcode]["chores"][choreName]["complete"] = completeBool
+                    rooms[roomcode]["chores"][choreName]["username"] = username
+
+                    return rooms[roomcode]["chores"], 200
+
+        else:
+            completeBool = False
+            if complete == "true":
+                complete = True
+            
+            if Weekdays.is_weekday(weekday) is not None:
+                if username in rooms[roomcode]["roommates"]:
+
+                    rooms[roomcode]["chores"][choreName] = {}
+                    rooms[roomcode]["chores"][choreName]["completed"] = completeBool
+                    rooms[roomcode]["chores"][choreName]["username"] = username
+                    rooms[roomcode]["chores"][choreName]["weekday"] = weekday
+                    
+                    return rooms[roomcode]["chores"], 200
+                
+
+    return {"status": "fail"}, 400
 if __name__ == "__main__":
     application.debug = True
     application.run()

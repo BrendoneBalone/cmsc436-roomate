@@ -233,3 +233,16 @@ All error codes are 400 and above.
     - Error: Response code 400
         - Nonexistent roomcode
         - Nonexistent grocery item
+
+### chores/roomcode/\<roomcode>/add_all/\<choreName>/\<complete>/\<username>/\<weekday>
+- POST Request
+    - Purpose: Can create/update all fields of a chore all at once
+    - Input: roomcode, choreName, complete (true or false), username, weekday
+    - Output: {choreName: {"completed": completedBool, "username": username, "weekday": weekday}}, Response code 200
+        - ex: {"cleaning": {"completed": "false", "username": "Daniel", "weekday": "monday"}}
+        - Updated chores list
+    - Error: Response code 400
+        - Nonexistent roomcode
+        - Invalid weekday (should be all lowercase, correct spelling)
+            - ex. "monday"
+        - Nonexistent username
