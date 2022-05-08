@@ -31,6 +31,7 @@ class LoginActivity: AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
         var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
         var username: String? = sharedPreferences.getString(USER_KEY, "")
@@ -41,7 +42,7 @@ class LoginActivity: AppCompatActivity() {
 
         if(roomcode!! != "" && username!! != "") {
             setContentView(R.layout.login_loading)
-            requestRoom(roomcode, username!!)
+            loginViewModel.onRequestRoomCalled(roomcode, username)
         } else {
             setContentView(R.layout.login_activity)
 
@@ -54,12 +55,11 @@ class LoginActivity: AppCompatActivity() {
             createRoomButton.setOnClickListener{onCreateRoomButtonClick()}
         }
 
-
-
         loginViewModel.roomcode.observe(this) { result ->
             // Update the text view to display the JSON result.
             roomText.setText(result)
         }
+
         loginViewModel.loginSuccess.observe(this) { result ->
             // Update the text view to display the JSON result.
             Log.i(TAG, "Request room success")
@@ -92,10 +92,6 @@ class LoginActivity: AppCompatActivity() {
             return
         }
 
-        requestRoom(roomcode, username)
-    }
-
-    private fun requestRoom(roomcode: String, username: String) {
         loginViewModel.onRequestRoomCalled(roomcode, username)
     }
 
