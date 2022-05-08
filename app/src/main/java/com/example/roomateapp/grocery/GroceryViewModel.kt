@@ -136,6 +136,6 @@ class GroceryViewModel: ViewModel() {
 
     companion object {
         private const val TAG = "RoommateApp"
-        private const val SERVER: String = "http://10.0.2.2:5000"
+        private const val SERVER: String = "http://436env5.eba-vukmr2km.us-east-2.elasticbeanstalk.com"
     }
 }
