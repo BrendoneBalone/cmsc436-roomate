@@ -5,10 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.response.*
@@ -19,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class LoginViewModel : ViewModel(){
 
@@ -32,7 +27,7 @@ class LoginViewModel : ViewModel(){
         get() = _roomcode
     val loginSuccess: LiveData<Boolean>
         get() = _loginSuccess
-    val gson = GsonBuilder().setPrettyPrinting().create()
+
     var job: Job? = null
 
     fun onGetNewRoomCalled() {
@@ -100,9 +95,6 @@ class LoginViewModel : ViewModel(){
             else            -> value
         }
     }
-
-    fun String.prettyPrint(): String =
-        gson.toJson(JsonParser.parseString(this))
 
     private suspend fun makeGetRequest(url: String): String =
         withContext(Dispatchers.IO) {
