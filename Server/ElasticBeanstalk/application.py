@@ -270,7 +270,7 @@ def chores_weekday_add(roomcode='', choreName='', weekday=''):
 
     return {"status": "fail"}, 400
 
-@application.route('chores/roomcode/<roomcode>/add_all/<choreName>/<complete>/<username>/<weekday>', methods=["POST"])
+@application.route('/chores/roomcode/<roomcode>/add_all/<choreName>/<complete>/<username>/<weekday>', methods=["POST"])
 def chores_add_all(roomcode='', choreName='', complete='', username='',weekday=''):
     if roomcode in rooms:
 
@@ -305,6 +305,7 @@ def chores_add_all(roomcode='', choreName='', complete='', username='',weekday='
                 
 
     return {"status": "fail"}, 400
+
 if __name__ == "__main__":
     application.debug = True
     application.run()
