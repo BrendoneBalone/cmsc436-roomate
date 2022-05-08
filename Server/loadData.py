@@ -1,7 +1,7 @@
 import requests
 import json
 
-URL = 'http://localhost:5000'
+URL = 'http://436env5.eba-vukmr2km.us-east-2.elasticbeanstalk.com'
 
 f = open("data.json")
 jsonData = json.load(f)

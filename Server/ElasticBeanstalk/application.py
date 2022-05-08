@@ -3,8 +3,6 @@ from flask import Flask, request
 import string
 import random
 
-from regex import R
-
 application = Flask(__name__)
 
 #################################
