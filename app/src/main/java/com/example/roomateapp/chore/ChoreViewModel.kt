@@ -175,6 +175,6 @@ class ChoreViewModel : ViewModel(){
     companion object {
         private const val TAG = "RoommateApp"
 
-        private const val URL = "http://436env6.eba-czfwhf2y.us-east-2.elasticbeanstalk.com"
+        private const val URL = "http://436env7.eba-ayuzpbp2.us-east-2.elasticbeanstalk.com"
     }
 }
