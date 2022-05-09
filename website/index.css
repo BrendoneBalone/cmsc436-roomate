@@ -46,6 +46,16 @@ h1 {
     text-align: center;
 }
 
+.screenshots div {
+    display: flex;
+    justify-content: center;
+}
+
+.screenshots img {
+    width: 23em;
+    margin: 1em 2em 3em 2em;
+}
+
 .libraries table, td {
     width: 80%;
     margin: auto;
