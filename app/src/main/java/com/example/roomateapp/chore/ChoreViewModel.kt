@@ -89,6 +89,21 @@ class ChoreViewModel : ViewModel(){
         }
     }
 
+    fun deleteChore (roomcode: String, chore: String) {
+        job = viewModelScope.launch {
+            try {
+                makeDeleteRequest("$URL/chores/roomcode/$roomcode/name/$chore")
+                
+
+            } catch (e: Exception) {
+                Log.i(
+                    ChoreViewModel.TAG,
+                    "Error in getChoreList in ChoreViewModel: ${e.message}"
+                )
+            }
+        }
+    }
+
     fun getChoreDay(roomcode: String, chore: String) {
 
         var obj: Map<String, *>? = null
@@ -146,6 +161,13 @@ class ChoreViewModel : ViewModel(){
             // Construct a new Ktor HttpClient to perform the get
             // request and then return the JSON result.
             HttpClient().post(url)
+        }
+
+    private suspend fun makeDeleteRequest(url: String): HttpResponse =
+        withContext(Dispatchers.IO) {
+            // Construct a new Ktor HttpClient to perform the get
+            // request and then return the JSON result.
+            HttpClient().delete(url)
         }
 
 

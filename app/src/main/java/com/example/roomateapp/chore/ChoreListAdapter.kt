@@ -11,9 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.roomateapp.R
 import com.example.roomateapp.grocery.GroceryItem
+import kotlin.reflect.jvm.internal.impl.util.Check
 
 class ChoreListAdapter(private val mContext: Context) :
 
@@ -21,7 +23,8 @@ class ChoreListAdapter(private val mContext: Context) :
     RecyclerView.Adapter<ChoreListAdapter.ViewHolder>() {
     private val weekday = arrayOf(" ","SUN","MON","TUE","WED","THU","FRI","SAT")
     private val mItems = ArrayList<ChoreItem>()
-    private val toDelete = ArrayList<String>()
+    val toDelete = ArrayList<String>()
+    private lateinit var  mChoreViewModel: ChoreViewModel
     // Add a ToDoItem to the adapter
     // Notify observers that the data set has changed
 
@@ -30,8 +33,10 @@ class ChoreListAdapter(private val mContext: Context) :
         notifyItemChanged(mItems.size)
     }
 
-    fun remove(title: String) {
+    private fun remove(title: String) {
         mItems.removeIf { item: ChoreItem -> item.title.equals(title) }
+        toDelete.add(title)
+        notifyDataSetChanged()
     }
 
     // Clears the list adapter of all items.
@@ -70,6 +75,8 @@ class ChoreListAdapter(private val mContext: Context) :
             vh.mTitleView = v.findViewById(R.id.chore_titleView)
             vh.mStatusView = v.findViewById(R.id.statusCheckBox)
             vh.mAssignedView = v.findViewById(R.id.assignedView)
+            vh.mDelete = v.findViewById(R.id.delete_button)
+            vh.mChecked = v.findViewById<CheckBox>(R.id.statusCheckBox)
             return vh
         }
     }
@@ -101,13 +108,18 @@ class ChoreListAdapter(private val mContext: Context) :
 
             //Display Time and Date
             viewHolder.mDateView!!.text = weekday[toDoItem.date]
-            viewHolder.mStatusView!!.setOnCheckedChangeListener { _,isChecked ->
-                if(isChecked) {
+            viewHolder.mChecked!!.setOnCheckedChangeListener { compoundButton, b ->
+                if(compoundButton.isChecked) {
                     Log.i(TAG,"checked")
-                    //viewHolder.remove(toDoItem)
+                } else {
+                    Log.i(TAG,"cekc")
                 }
-
             }
+
+            viewHolder.mDelete!!.setOnClickListener {
+                remove(toDoItem.title.toString())
+            }
+
         }
     }
 
@@ -124,6 +136,8 @@ class ChoreListAdapter(private val mContext: Context) :
         var mAssignedView: TextView? = null
         var mStatusView: CheckBox? = null
         var mDateView: TextView? = null
+        var mDelete: Button? = null
+        var mChecked: CheckBox? = null
     }
 
     companion object {
