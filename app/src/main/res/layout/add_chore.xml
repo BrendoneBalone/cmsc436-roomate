@@ -37,53 +37,16 @@
     </EditText>
 
     <TextView
-        android:id="@+id/status"
-        android:layout_width="84dp"
-        android:layout_height="33dp"
-        android:layout_below="@+id/chore_title"
-        android:layout_alignParentStart="true"
-        android:text="Status"
-        android:layout_marginTop="15dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chore_title" />
-
-    <RadioGroup
-        android:id="@+id/statusGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/status"
-        android:layout_alignParentStart="true"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status">
-
-        <RadioButton
-            android:id="@+id/statusDone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Done" />
-
-        <RadioButton
-            android:id="@+id/statusNotDone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Not Done" />
-
-    </RadioGroup>
-
-    <TextView
         android:id="@+id/time_and_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/statusGroup"
+        android:layout_below="@id/chore_title"
         android:layout_alignParentStart="true"
         android:layout_marginTop="8dp"
-        android:text="Date and Time"
+        android:text="Day"
         android:textAppearance="?android:attr/textAppearanceLarge"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statusGroup"/>
+        app:layout_constraintTop_toBottomOf="@+id/chore_title"/>
 
     <TextView
         android:id="@+id/date"
@@ -92,19 +55,10 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/time_and_date"
         android:layout_marginTop="8dp"
-        android:text="No Date Set"
+        android:text="No Day"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time_and_date"/>
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/time_and_date"
-        android:layout_marginTop="8dp"
-        android:text="No Time Set"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time_and_date"/>
 
     <Button
         android:id="@+id/date_picker_button"
@@ -114,19 +68,8 @@
         android:layout_marginTop="8dp"
         android:layout_below="@id/date"
         app:layout_constraintTop_toBottomOf="@id/date"
-        android:text="Choose Date" />
-
-    <Button
-        android:id="@+id/time_picker_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@id/date_picker_button"
-        android:layout_below="@id/time"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time"
-        android:text="Choose Time" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Choose Day" />
     <!-- Buttons -->
 
 
