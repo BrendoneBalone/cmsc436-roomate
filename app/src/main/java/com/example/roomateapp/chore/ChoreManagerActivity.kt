@@ -64,6 +64,7 @@ class ChoreManagerActivity : AppCompatActivity() {
             for((key,value) in result) {
                 if (value is Map<*, *>){
                     for ((key2,value2) in value) {
+
                         if (key2 == "weekday") {
                             day = value2.toString()
                         }
@@ -73,15 +74,18 @@ class ChoreManagerActivity : AppCompatActivity() {
                                 else -> Status.DONE
                             }
                         }
+
                     }
+
                 }
-                Log.i(TAG,"chore by name of $key")
+
                 mAdapter.add(ChoreItem(key,completed,weekday.indexOf(day)))
             }
 
         }
 
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -124,7 +128,6 @@ class ChoreManagerActivity : AppCompatActivity() {
                 Log.i(TAG,"$date")
                 mChoreItem = ChoreItem(newTitle, status, date)
                 mAdapter.add(mChoreItem)
-
                 choreViewModel.onChoreCreated(intent.getStringExtra("roomcode")!!,intent.getStringExtra("username").toString(),mChoreItem.title.toString(),mChoreItem.status.toString().toBoolean(),weekday[mChoreItem.date])
                 Log.i(TAG,"posted chore")
             }
@@ -140,6 +143,21 @@ class ChoreManagerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        updateDatabase()
+    }
+
+    private fun updateDatabase() {
+        var items: ArrayList<String> = mAdapter.toDelete
+
+        for(itemName: String in items) {
+            choreViewModel.deleteChore(roomcode!!, itemName)
+        }
+
+        mAdapter.toDelete.clear()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -160,68 +178,6 @@ class ChoreManagerActivity : AppCompatActivity() {
         }
     }
 
-//    // Load stored ToDoItems
-//    private fun loadItemsFromFile() {
-//        var reader: BufferedReader? = null
-//        try {
-//            val fis = openFileInput(FILE_NAME)
-//            reader = BufferedReader(InputStreamReader(fis))
-//
-//            var title: String?
-//            var priority: String?
-//            var status: String?
-//            var date: Date?
-//
-//            do {
-//                title = reader.readLine()
-//                if (title == null)
-//                    break
-//                priority = reader.readLine()
-//                status = reader.readLine()
-//                date = ChoreItem.FORMAT.parse(reader.readLine())
-//                mAdapter.add(ChoreItem(title,
-//                        Status.valueOf(status), date))
-//
-//            }
-//            while (true)
-//
-//        } catch (e: FileNotFoundException) {
-//            e.printStackTrace()
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        } catch (e: ParseException) {
-//            e.printStackTrace()
-//        } finally {
-//            if (null != reader) {
-//                try {
-//                    reader.close()
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                }
-//
-//            }
-//        }
-//    }
-
-//    // Save ToDoItems to file
-//    private fun saveItemsToFile() {
-//        var writer: PrintWriter? = null
-//        try {
-//            val fos = openFileOutput(FILE_NAME, Context.MODE_PRIVATE)
-//            writer = PrintWriter(BufferedWriter(OutputStreamWriter(
-//                    fos)))
-//
-//            for (idx in 1 until mAdapter.itemCount) {
-//
-//                writer.println(mAdapter.getItem(idx))
-//
-//            }
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        } finally {
-//            writer?.close()
-//        }
-//    }
 
     companion object {
 
