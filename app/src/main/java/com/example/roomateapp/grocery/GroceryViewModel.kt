@@ -25,7 +25,6 @@ class GroceryViewModel: ViewModel() {
     val groceries: LiveData<Map<String, *>>
         get() = _groceries
 
-
     var job: Job? = null
 
 
@@ -115,7 +114,6 @@ class GroceryViewModel: ViewModel() {
 
         return success
     }
-
     // Creates generic getRequest
     private suspend fun getRequest(url: String): String =
         withContext(Dispatchers.IO) {
