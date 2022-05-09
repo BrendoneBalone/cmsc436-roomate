@@ -86,6 +86,13 @@ def load():
         rooms[room] = newData[room]
     return "ok", 200
 
+@application.route('/clear_groceries', methods=["POST"])
+def clear_groceries():
+    for roomcode in rooms:
+        for chore in rooms[roomcode]["chores"]:
+            rooms[roomcode]["chores"][chore]["completed"] = False
+
+    return "ok", 200
 
 #################################
 # Routes
