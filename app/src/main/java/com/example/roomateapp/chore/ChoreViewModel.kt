@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.roomateapp.grocery.GroceryViewModel
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -24,9 +25,13 @@ import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 class ChoreViewModel : ViewModel(){
 
     private val _roomcode = MutableLiveData<String>()
-
+    private val _chores = MutableLiveData<Map<String, *>>()
+    private val _choreDay = MutableLiveData<Map<String, *>>()
+    val chores: LiveData<Map<String, *>>
+        get() = _chores
     private val _choreSuccess = MutableLiveData<Boolean>()
-
+    val choreDay: LiveData<Map<String, *>>
+        get() = _choreDay
     /** Immutable LiveData for external publishing/observing. */
     val roomcode: LiveData<String>
         get() = _roomcode
@@ -42,7 +47,7 @@ class ChoreViewModel : ViewModel(){
             try {
                 // 1. Run the suspending network request.
                     Log.i(TAG,roomcode)
-                val response = makePostRequest("$URL/chores/roomcode/$roomcode/name/$chore")
+                val response = makePostRequest("$URL/chores/roomcode/$roomcode/add_all/$chore/$completed/$username/$date")
 
                 if (response.status.value == 200) {
                     _choreSuccess.postValue(true)
@@ -57,7 +62,59 @@ class ChoreViewModel : ViewModel(){
 
     }
 
+    fun getChoreList(roomcode: String) {
 
+        var obj: Map<String, *>? = null
+
+        // Launch the request in the background
+        job = viewModelScope.launch {
+            try {
+                val response = makeGetRequest("$URL/chores/roomcode/$roomcode")
+
+
+                val obj = JSONObject(response).toMap()
+
+                if (obj!!["status"] in 200..209) {
+                    throw Exception("Received response with code ${obj!!["status"]}")
+                }
+
+                _chores.postValue(obj!!)
+
+            } catch (e: Exception) {
+                Log.i(
+                    ChoreViewModel.TAG,
+                    "Error in getChoreList in ChoreViewModel: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun getChoreDay(roomcode: String, chore: String) {
+
+        var obj: Map<String, *>? = null
+
+        // Launch the request in the background
+        job = viewModelScope.launch {
+            try {
+                val response = makeGetRequest("chores/roomcode/$roomcode/name/$chore")
+
+
+                val obj = JSONObject(response).toMap()
+
+                if (obj!!["status"] in 200..209) {
+                    throw Exception("Received response with code ${obj!!["status"]}")
+                }
+
+                _choreDay.postValue(obj!!)
+
+            } catch (e: Exception) {
+                Log.i(
+                    ChoreViewModel.TAG,
+                    "Error in getChoreList in ChoreViewModel: ${e.message}"
+                )
+            }
+        }
+    }
 
     // This was taken from https://stackoverflow.com/questions/44870961/how-to-map-a-json-string-to-kotlin-map
     fun JSONObject.toMap(): Map<String, *> = keys().asSequence().associateWith {

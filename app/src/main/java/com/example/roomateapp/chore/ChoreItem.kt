@@ -2,22 +2,20 @@ package com.example.roomateapp.chore
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 import android.content.Intent
+import java.util.*
 
 class ChoreItem {
 
     var title : String? = String()
     var status = Status.NOTDONE
-    var date = Date()
-
+    var date : Int = 0
     enum class Status {
         NOTDONE, DONE
     }
 
-    internal constructor(title: String, status: Status, date: Date) {
+    internal constructor(title: String, status: Status, date: Int) {
         this.title = title
         this.status = status
         this.date = date
@@ -25,18 +23,6 @@ class ChoreItem {
 
     // Create a new ToDoItem from data packaged in an Intent
 
-    internal constructor(intent: Intent) {
-
-        title = intent.getStringExtra(TITLE)
-        status = Status.valueOf(intent.getStringExtra(STATUS)!!)
-
-        date = try {
-            FORMAT.parse(intent.getStringExtra(DATE)!!)!!
-        } catch (e: ParseException) {
-            Date()
-        }
-
-    }
 
     override fun toString(): String {
         return (title + ITEM_SEP + ITEM_SEP + status + ITEM_SEP

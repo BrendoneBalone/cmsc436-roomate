@@ -13,18 +13,25 @@ import android.widget.*
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
 import com.example.roomateapp.R
+import com.example.roomateapp.grocery.GroceryItem
 
 class ChoreListAdapter(private val mContext: Context) :
+
+
     RecyclerView.Adapter<ChoreListAdapter.ViewHolder>() {
-
+    private val weekday = arrayOf(" ","SUN","MON","TUE","WED","THU","FRI","SAT")
     private val mItems = ArrayList<ChoreItem>()
-
+    private val toDelete = ArrayList<String>()
     // Add a ToDoItem to the adapter
     // Notify observers that the data set has changed
 
     fun add(item: ChoreItem) {
         mItems.add(item)
         notifyItemChanged(mItems.size)
+    }
+
+    fun remove(title: String) {
+        mItems.removeIf { item: ChoreItem -> item.title.equals(title) }
     }
 
     // Clears the list adapter of all items.
@@ -62,6 +69,7 @@ class ChoreListAdapter(private val mContext: Context) :
             vh.mDateView = v.findViewById<TextView>(R.id.dateView)
             vh.mTitleView = v.findViewById(R.id.chore_titleView)
             vh.mStatusView = v.findViewById(R.id.statusCheckBox)
+            vh.mAssignedView = v.findViewById(R.id.assignedView)
             return vh
         }
     }
@@ -92,7 +100,14 @@ class ChoreListAdapter(private val mContext: Context) :
             }
 
             //Display Time and Date
-            viewHolder.mDateView!!.text = toDoItem.date.toString()
+            viewHolder.mDateView!!.text = weekday[toDoItem.date]
+            viewHolder.mStatusView!!.setOnCheckedChangeListener { _,isChecked ->
+                if(isChecked) {
+                    Log.i(TAG,"checked")
+                    //viewHolder.remove(toDoItem)
+                }
+
+            }
         }
     }
 
@@ -106,6 +121,7 @@ class ChoreListAdapter(private val mContext: Context) :
     class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var mItemLayout: View = itemView
         var mTitleView: TextView? = null
+        var mAssignedView: TextView? = null
         var mStatusView: CheckBox? = null
         var mDateView: TextView? = null
     }

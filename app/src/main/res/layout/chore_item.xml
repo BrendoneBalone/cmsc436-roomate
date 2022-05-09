@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="125dp"
     android:orientation="vertical" >
 
     <TextView
@@ -48,6 +48,22 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/DateLabel"
         android:layout_toEndOf="@+id/DateLabel" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/AssignedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/DateLabel"
+        android:text="Assigned to: " >
+    </TextView>
+    <TextView
+        android:id="@+id/assignedView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/AssignedLabel"
+        android:layout_toEndOf="@+id/AssignedLabel" >
     </TextView>
 
 </RelativeLayout>
