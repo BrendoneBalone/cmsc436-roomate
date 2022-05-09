@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/add_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.296" />
+        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/drawable/ic_launcher_background.xml" value="0.296" />
+        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/add_item.xml" value="0.25" />
         <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/grocery_header_view.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/grocery_item.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/login_activity.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/grocery_recycle_view.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/login_activity.xml" value="0.1" />
         <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/login_loading.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Brendan Gillespy/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout/main_activity.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/brend/Documents/CMSC436/cmsc436-roomate/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1875" />

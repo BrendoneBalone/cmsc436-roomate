@@ -27,6 +27,8 @@ class GroceryManagerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.grocery_recycle_view)
 
+        supportActionBar?.hide()
+
         roomcode = intent.getStringExtra("roomcode")
         username = intent.getStringExtra("username")
 
@@ -68,10 +70,9 @@ class GroceryManagerActivity : AppCompatActivity() {
 
         if(requestCode == ADD_GROCERY_ITEM_REQUEST && resultCode == RESULT_OK) {
             mAdapter.add(GroceryItem(data!!))
+            var itemName: String? = data!!.getStringExtra("name")
+            mGroceryViewModel.addGroceryItem(roomcode!!, itemName!!)
         }
-
-        var itemName: String? = data!!.getStringExtra("name")
-        mGroceryViewModel.addGroceryItem(roomcode!!, itemName!!)
     }
 
     public override fun onResume() {
