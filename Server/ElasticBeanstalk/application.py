@@ -171,7 +171,13 @@ def grocery_complete(roomcode='', groceryName=''):
 @application.route('/roommates/roomcode/<roomcode>', methods=["GET"])
 def roommates(roomcode=''):
     if roomcode in rooms:
-        return {"roommates": rooms[roomcode]["roommates"]}, 200
+        retstr = ""
+        for user in rooms[roomcode]["roommates"]:
+            if retstr == "":
+                retstr = user
+            else:
+                retstr += " " + user
+        return retstr, 200
     
     return {"status": "fail"}, 400
 

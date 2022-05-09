@@ -7,19 +7,17 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import androidx.fragment.app.DialogFragment
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
-import android.widget.TimePicker
+import android.widget.*
 import com.example.roomateapp.R
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
+import com.example.roomateapp.LoginActivity
 import com.example.roomateapp.chore.ChoreItem.Status
 
 class ChoreActivity : FragmentActivity() {
@@ -28,9 +26,12 @@ class ChoreActivity : FragmentActivity() {
     private lateinit var mStatusRadioGroup: RadioGroup
     private lateinit var mTitleText: EditText
     private lateinit var dateView: TextView
+    private lateinit var assignedText: AutoCompleteTextView
 
     private var roomcode: String? = null
     private var username: String? = null
+
+    private lateinit var addChoreViewModel: AddChoreViewModel
 
     private val status: Status
         get() {
@@ -43,11 +44,28 @@ class ChoreActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_chore)
-        roomcode = intent.getStringExtra("roomcode")
-        username = intent.getStringExtra("username")
+//        roomcode = intent.getStringExtra("roomcode")
+//        username = intent.getStringExtra("username")
+
+        var sharedPreferences: SharedPreferences = getSharedPreferences(LoginActivity.PREF_KEY, Context.MODE_PRIVATE)
+
+        var roomcode: String? = sharedPreferences.getString(LoginActivity.ROOM_KEY, "")
+        var username: String? = sharedPreferences.getString(LoginActivity.USER_KEY, "")
 
         mTitleText = findViewById<View>(R.id.chore_title) as EditText
         dateView = findViewById<View>(R.id.date) as TextView
+        assignedText = findViewById<AutoCompleteTextView>(R.id.assigned_title)
+
+        addChoreViewModel = ViewModelProvider(this)[AddChoreViewModel::class.java]
+
+        Log.i(TAG, "HERE")
+        addChoreViewModel.onGetRoommate(roomcode!!, username!!)
+
+        addChoreViewModel.roommateList.observe(this) { result ->
+            val adapter = ArrayAdapter (this, R.layout.list_item, result)
+            assignedText.setAdapter(adapter)
+        }
+
 
         // Set the default date and time
 
