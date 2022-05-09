@@ -70,6 +70,19 @@
         app:layout_constraintTop_toBottomOf="@id/date"
         app:layout_constraintStart_toStartOf="parent"
         android:text="Choose Day" />
+    <EditText
+        android:id="@+id/assigned_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Enter roommate's name"
+        android:inputType="textShortMessage"
+        android:importantForAutofill="no"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_picker_button">
+        <requestFocus />
+    </EditText>
     <!-- Buttons -->
 
 
