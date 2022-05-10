@@ -11,14 +11,16 @@ class ChoreItem {
     var title : String? = String()
     var status = Status.NOTDONE
     var date : Int = 0
+    var assigned : String? = String()
     enum class Status {
         NOTDONE, DONE
     }
 
-    internal constructor(title: String, status: Status, date: Int) {
+    internal constructor(title: String, status: Status, date: Int, assigned: String) {
         this.title = title
         this.status = status
         this.date = date
+        this.assigned = assigned
     }
 
     // Create a new ToDoItem from data packaged in an Intent
@@ -47,16 +49,6 @@ class ChoreItem {
         val FORMAT = SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.US)
 
-        // Take a set of String data values and
-        // package them for transport in an Intent
-
-        fun packageIntent(intent: Intent, title: String, status: Status, date: String) {
-
-            intent.putExtra(TITLE, title)
-            intent.putExtra(STATUS, status.toString())
-            intent.putExtra(DATE, date)
-
-        }
     }
 
 }

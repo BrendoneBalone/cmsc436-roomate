@@ -24,6 +24,8 @@ class ChoreListAdapter(private val mContext: Context) :
     private val weekday = arrayOf(" ","SUN","MON","TUE","WED","THU","FRI","SAT")
     private val mItems = ArrayList<ChoreItem>()
     val toDelete = ArrayList<String>()
+    val toComplete = ArrayList<String>()
+    val toUnComplete = ArrayList<String>()
     private lateinit var  mChoreViewModel: ChoreViewModel
     // Add a ToDoItem to the adapter
     // Notify observers that the data set has changed
@@ -67,16 +69,15 @@ class ChoreListAdapter(private val mContext: Context) :
         } else {
             val v = LayoutInflater.from(parent.context).inflate(R.layout.chore_item, parent, false)
 
-            // TODO - Inflate the View (defined in todo_item.xml) for this ToDoItem and store references in ViewHolder
+
 
             val vh = ViewHolder(v)
 
             vh.mDateView = v.findViewById<TextView>(R.id.dateView)
             vh.mTitleView = v.findViewById(R.id.chore_titleView)
-            vh.mStatusView = v.findViewById(R.id.statusCheckBox)
+            vh.mStatusView = v.findViewById<CheckBox>(R.id.choreCheckBox)
             vh.mAssignedView = v.findViewById(R.id.assignedView)
             vh.mDelete = v.findViewById(R.id.delete_button)
-            vh.mChecked = v.findViewById<CheckBox>(R.id.statusCheckBox)
             return vh
         }
     }
@@ -101,24 +102,32 @@ class ChoreListAdapter(private val mContext: Context) :
             val toDoItem = mItems[position - 1]
             viewHolder.mTitleView!!.text = toDoItem.title
             //Initialize statusView's isChecked property
-            viewHolder.mStatusView!!.isChecked = when(toDoItem.status.toString()) {
+
+            viewHolder.mStatusView!!.isChecked = when (toDoItem.status.toString()) {
                 "DONE" -> true
                 else -> false
             }
 
+            viewHolder.mAssignedView!!.text = toDoItem.assigned
+
             //Display Time and Date
             viewHolder.mDateView!!.text = weekday[toDoItem.date]
-            viewHolder.mChecked!!.setOnCheckedChangeListener { compoundButton, b ->
-                if(compoundButton.isChecked) {
-                    Log.i(TAG,"checked")
-                } else {
-                    Log.i(TAG,"cekc")
-                }
-            }
 
             viewHolder.mDelete!!.setOnClickListener {
                 remove(toDoItem.title.toString())
             }
+            viewHolder.mStatusView!!.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener {
+                    buttonView,isChecked ->
+                if (isChecked) {
+                    Log.i(TAG,"isChecked")
+                    toComplete.add(toDoItem.title.toString())
+                    toUnComplete.remove(toDoItem.title.toString())
+                } else {
+                    toComplete.remove(toDoItem.title.toString())
+                    toUnComplete.add(toDoItem.title.toString())
+                }
+            })
+
 
         }
     }
@@ -141,7 +150,7 @@ class ChoreListAdapter(private val mContext: Context) :
     }
 
     companion object {
-        private const val TAG = "Lab-UserInterface"
+        private const val TAG = "RoommateApp"
         private const val HEADER_VIEW_TYPE = R.layout.chore_header_view
         private const val TODO_VIEW_TYPE = R.layout.chore_item
     }

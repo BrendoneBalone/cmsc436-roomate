@@ -22,20 +22,51 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class AddChoreViewModel : ViewModel() {
-
+    //2J0PPS
     val gson = GsonBuilder().setPrettyPrinting().create()
     private val _roommateList = MutableLiveData<Array<String>>()
     val roommateList: LiveData<Array<String>>
         get() = _roommateList
+    private val _roomcode = MutableLiveData<String>()
+    private val _choreSuccess = MutableLiveData<Boolean>()
+
 
     var job: Job? = null
 
+
+    fun onChoreCreated(roomcode: String, username: String, chore: String, completed: Boolean, date: String) {
+
+
+        job = viewModelScope.launch {
+            try {
+                // 1. Run the suspending network request.
+                Log.i(TAG,roomcode)
+                val response = makePostRequest("${URL}/chores/roomcode/$roomcode/add_all/$chore/$completed/$username/$date")
+
+                if (response.status.value == 200) {
+                    _choreSuccess.postValue(true)
+                    Log.i(TAG, "Received 200")
+                }
+
+            } catch (e: Exception) {
+                // Something went wrong ... post error to LiveData feed.
+                _roomcode.postValue("Network request failed: ${e.message}")
+            }
+        }
+
+    }
+    private suspend fun makePostRequest(url: String): HttpResponse =
+        withContext(Dispatchers.IO) {
+            // Construct a new Ktor HttpClient to perform the get
+            // request and then return the JSON result.
+            HttpClient().post(url)
+        }
     fun onGetRoommate(roomcode: String, username: String) {
         job = viewModelScope.launch {
             try {
                 // 1. Run the suspending network request.
                 Log.i(TAG,roomcode)
-                val response = makeGetRequest("${URL}/roommate/roomcode/$roomcode")
+                val response = makeGetRequest("${URL}/roommates/roomcode/$roomcode")
 
 //                val obj = JSONObject(response).toMap()
                 val obj = response.split(" ").toTypedArray()
@@ -44,8 +75,8 @@ class AddChoreViewModel : ViewModel() {
 //                    throw Exception("Received response with code ${obj!!["status"]}")
 //                }
 
-                Log.i(TAG, "Roommates: ${obj!!}")
-
+                Log.i(TAG, "Roommates: ${obj[0]}")
+                _roommateList.postValue(obj)
             } catch (e: Exception) {
                 // Something went wrong ... post error to LiveData feed.
                 Log.i(

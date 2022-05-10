@@ -82,7 +82,6 @@
         android:importantForAutofill="no"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_picker_button">
-        <requestFocus />
     </AutoCompleteTextView>
     <!-- Buttons -->
 

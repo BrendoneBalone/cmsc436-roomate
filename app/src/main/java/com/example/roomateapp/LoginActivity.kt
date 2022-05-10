@@ -19,7 +19,7 @@ class LoginActivity: AppCompatActivity() {
 
     //TODO: Add a bit of text specifying username preferences, or adding some more input testing when logging in
     //TODO: Figure out how we're storing the roomcode and user and passing it around as needed. This is urgent and needs to be fixed.
-
+    //test: CXFNF0
     private lateinit var roomText: EditText
     private lateinit var nameText: EditText
     private lateinit var loginButton: Button
@@ -32,7 +32,6 @@ class LoginActivity: AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        clearSharedPrefs()
         sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE)
         var roomcode: String? = sharedPreferences.getString(ROOM_KEY, "")
         var username: String? = sharedPreferences.getString(USER_KEY, "")

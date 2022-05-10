@@ -47,8 +47,8 @@ class ChoreViewModel : ViewModel(){
             try {
                 // 1. Run the suspending network request.
                     Log.i(TAG,roomcode)
+                Log.i(TAG,"$username")
                 val response = makePostRequest("$URL/chores/roomcode/$roomcode/add_all/$chore/$completed/$username/$date")
-
                 if (response.status.value == 200) {
                     _choreSuccess.postValue(true)
                     Log.i(TAG, "Received 200")
@@ -65,7 +65,7 @@ class ChoreViewModel : ViewModel(){
     fun getChoreList(roomcode: String) {
 
         var obj: Map<String, *>? = null
-
+        Log.i(TAG, "in get chore list")
         // Launch the request in the background
         job = viewModelScope.launch {
             try {
@@ -79,6 +79,35 @@ class ChoreViewModel : ViewModel(){
                 }
 
                 _chores.postValue(obj!!)
+
+            } catch (e: Exception) {
+                Log.i(
+                    ChoreViewModel.TAG,
+                    "Error in getChoreList in ChoreViewModel: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun completeChore (roomcode : String, chore: String) {
+        job = viewModelScope.launch {
+            try {
+                makePostRequest("$URL/chores/roomcode/$roomcode/name/$chore/complete")
+
+
+            } catch (e: Exception) {
+                Log.i(
+                    ChoreViewModel.TAG,
+                    "Error in getChoreList in ChoreViewModel: ${e.message}"
+                )
+            }
+        }
+    }
+    fun unCompleteChore (roomcode : String, chore: String) {
+        job = viewModelScope.launch {
+            try {
+                makeDeleteRequest("$URL/chores/roomcode/$roomcode/name/$chore/complete")
+
 
             } catch (e: Exception) {
                 Log.i(
