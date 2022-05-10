@@ -62,7 +62,11 @@ class ChoreActivity : FragmentActivity() {
         addChoreViewModel.onGetRoommate(roomcode!!, username!!)
 
         addChoreViewModel.roommateList.observe(this) { result ->
-            val adapter = ArrayAdapter (this, R.layout.list_item, result)
+            for (item in result) {
+                Log.i(TAG,item)
+            }
+            val adapter = ArrayAdapter<String>(this, androidx.appcompat.R.layout.select_dialog_item_material, result)
+
             assignedText.setAdapter(adapter)
         }
 
@@ -117,7 +121,7 @@ class ChoreActivity : FragmentActivity() {
             // Date
 
             val dateData = dateView.text.toString()
-
+            val assigned = assignedText.text.toString()
             // Package ToDoItem data into an Intent
             val dataIntent: Intent = Intent().apply {
                 putExtra("title",titleData)
@@ -125,6 +129,8 @@ class ChoreActivity : FragmentActivity() {
                 putExtra("date",dateData)
                 putExtra("roomcode", roomcode)
                 putExtra("username", username)
+                putExtra("assigned", assigned.toString())
+
             }
 
             // TODO - return data Intent and finish

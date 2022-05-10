@@ -5,6 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:gravity="center"
-    android:text="+ Add a new item"
+    android:text="+ Add a new chore"
     android:textSize="24sp" >
 </TextView>

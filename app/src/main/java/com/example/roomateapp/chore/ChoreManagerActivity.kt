@@ -1,16 +1,5 @@
 package com.example.roomateapp.chore
 
-import android.app.Activity
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.io.PrintWriter
-import java.text.ParseException
-
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -20,20 +9,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.roomateapp.LoginViewModel
 import com.example.roomateapp.R
-import com.example.roomateapp.chore.ChoreListAdapter
 import com.example.roomateapp.chore.ChoreItem.Status
-import com.example.roomateapp.grocery.GroceryItem
-import com.example.roomateapp.grocery.GroceryManagerActivity
-import java.sql.Time
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ChoreManagerActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: ChoreListAdapter
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var choreViewModel: ChoreViewModel
+    private lateinit var mAddChoreViewModel: AddChoreViewModel
     private var roomcode: String? = null
     private var username: String? = null
     private val weekday = arrayOf(" ","sunday","monday","tuesday","wednesday","thursday","friday","saturday")
@@ -49,37 +35,44 @@ class ChoreManagerActivity : AppCompatActivity() {
         mRecyclerView.layoutManager = LinearLayoutManager(this)
         choreViewModel = ViewModelProvider(this)[ChoreViewModel::class.java]
 
-
         //Attach the adapter to this Activity's RecyclerView
         mRecyclerView.adapter = mAdapter
 
         choreViewModel.getChoreList(roomcode!!)
 
         choreViewModel.chores.observe(this) {result ->
+
             if(result.containsKey("status")) {
                 throw Error("Unable to request chores from database. Check logs.")
             }
             var day: String? = null
             var completed: Status = Status.DONE
+            var assigned : String? = null
             for((key,value) in result) {
+
                 if (value is Map<*, *>){
                     for ((key2,value2) in value) {
 
                         if (key2 == "weekday") {
                             day = value2.toString()
                         }
+
                         if (key2 == "completed") {
                             completed = when (value2.toString()) {
                                 "false" -> Status.NOTDONE
                                 else -> Status.DONE
                             }
                         }
+                        if (key2 == "username") {
+                            assigned = value2.toString()
+
+                        }
 
                     }
 
                 }
 
-                mAdapter.add(ChoreItem(key,completed,weekday.indexOf(day)))
+                mAdapter.add(ChoreItem(key,completed,weekday.indexOf(day),assigned!!))
             }
 
         }
@@ -93,9 +86,10 @@ class ChoreManagerActivity : AppCompatActivity() {
         Log.i(TAG, "Entered onActivityResult()")
         val newTitle:String
         val status:Status
+        val dataBaseStatus : Boolean
         val date: Int
         val mChoreItem: ChoreItem
-        val time : Time
+        val assigned :String
         //Check result code and request code
         // if user submitted a new ToDoItem
         // Create a new ToDoItem from the data Intent
@@ -111,6 +105,12 @@ class ChoreManagerActivity : AppCompatActivity() {
                         Status.NOTDONE
                     }
                 }
+                dataBaseStatus = when(data.getStringExtra("status").toString()) {
+                    "DONE" -> true
+                    else -> {
+                        false
+                    }
+                }
 
                 date = when (data.getStringExtra("date").toString()) {
                     "SUN" -> Calendar.SUNDAY
@@ -123,12 +123,11 @@ class ChoreManagerActivity : AppCompatActivity() {
                     else -> 0
                 }
 
+                assigned = data.getStringExtra("assigned").toString()
 
-
-                Log.i(TAG,"$date")
-                mChoreItem = ChoreItem(newTitle, status, date)
+                mChoreItem = ChoreItem(newTitle, status, date,assigned )
                 mAdapter.add(mChoreItem)
-                choreViewModel.onChoreCreated(intent.getStringExtra("roomcode")!!,intent.getStringExtra("username").toString(),mChoreItem.title.toString(),mChoreItem.status.toString().toBoolean(),weekday[mChoreItem.date])
+                choreViewModel.onChoreCreated(intent.getStringExtra("roomcode")!!,mChoreItem.assigned.toString(),mChoreItem.title.toString(),dataBaseStatus,weekday[mChoreItem.date])
                 Log.i(TAG,"posted chore")
             }
 
@@ -143,16 +142,26 @@ class ChoreManagerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        updateDatabase()
     }
 
     override fun onStop() {
         super.onStop()
-        updateDatabase()
+
     }
 
     private fun updateDatabase() {
         var items: ArrayList<String> = mAdapter.toDelete
-
+        var completed : ArrayList<String> = mAdapter.toComplete
+        var unCompleted: ArrayList<String> = mAdapter.toUnComplete
+        for (item in completed) {
+            Log.i(TAG,item)
+            choreViewModel.completeChore(roomcode!!,item)
+        }
+        for (item in unCompleted) {
+            Log.i(TAG,item)
+            choreViewModel.unCompleteChore(roomcode!!,item)
+        }
         for(itemName: String in items) {
             choreViewModel.deleteChore(roomcode!!, itemName)
         }
